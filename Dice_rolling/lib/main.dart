@@ -10,7 +10,7 @@ class DiceGameApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Dice Rolling Videoo HGsmr',
+      title: 'Dice Rolling Videoo',
       theme: ThemeData(
         primarySwatch: Colors.purple, // Change primary color
       ),
