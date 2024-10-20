@@ -12,14 +12,88 @@ class DiceGameApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Dice Rolling Game',
       theme: ThemeData(
-        primarySwatch: Colors.purple, // Change primary color
+        primarySwatch: Colors.purple,
       ),
-      home: DiceGameScreen(),
+      home: PlayerNameScreen(),
+    );
+  }
+}
+
+class PlayerNameScreen extends StatelessWidget {
+  final List<TextEditingController> controllers =
+  List.generate(4, (_) => TextEditingController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Enter Player Names'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info),
+            onPressed: () {
+              // Add functionality for info icon if needed
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.lightBlueAccent, Colors.yellowAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Welcome to the Dice Rolling Game!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            for (int i = 0; i < 4; i++)
+              TextField(
+                controller: controllers[i],
+                decoration: InputDecoration(
+                  labelText: 'Player ${i + 1} Name',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                List<String> playerNames =
+                controllers.map((controller) => controller.text).toList();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DiceGameScreen(playerNames: playerNames)),
+                );
+              },
+              child: Text('Start Game'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class DiceGameScreen extends StatefulWidget {
+  final List<String> playerNames;
+
+  DiceGameScreen({required this.playerNames});
+
   @override
   _DiceGameScreenState createState() => _DiceGameScreenState();
 }
@@ -31,12 +105,12 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
   final int maxRounds = 4;
   final List<int> scores = [0, 0, 0, 0];
   final List<int> turnsTaken = [0, 0, 0, 0];
-  String message = "Player 1's Turn";
+  String message = "";
   bool gameOver = false;
   int diceRoll = 1;
 
   // Dice images path
-  final List<String> diceImages = [
+  List<String> diceImages = [
     'images/dice-1.png',
     'images/dice-2.png',
     'images/dice-3.png',
@@ -45,11 +119,23 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
     'images/dice-6.png',
   ];
 
+  // Player colors
+  List<Color> playerColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.yellow,
+  ];
+
   // Custom colors
-  final Color playerTextColor = Colors.white;
-  final Color playerBackgroundColor = Colors.teal;
   final Color diceButtonColor = Colors.deepPurple;
   final Color restartButtonColor = Colors.orange;
+
+  @override
+  void initState() {
+    super.initState();
+    message = "${widget.playerNames[0]}'s Turn";
+  }
 
   void rollDice() {
     if (!gameOver) {
@@ -61,14 +147,14 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
         if (rounds < maxRounds * 4 - 1) {
           currentPlayer = (currentPlayer + 1) % 4;
           if (currentPlayer == 0) rounds++;
-          message = "Player ${currentPlayer + 1}'s Turn";
+          message = "${widget.playerNames[currentPlayer]}'s Turn";
         } else {
           gameOver = true;
           List<int> winners = findWinners();
           if (winners.length == 1) {
-            message = "Game Over! Player ${winners[0] + 1} wins with ${scores[winners[0]]} points!";
+            message = "Game Over! ${widget.playerNames[winners[0]]} wins with ${scores[winners[0]]} points!";
           } else {
-            String tiedPlayers = winners.map((i) => "Player ${i + 1}").join(' and ');
+            String tiedPlayers = winners.map((i) => widget.playerNames[i]).join(' and ');
             message = "Game Tied! $tiedPlayers with ${scores[winners[0]]} points!";
           }
         }
@@ -92,37 +178,129 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
     return winners;
   }
 
+  void openSettings() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          height: 300,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Settings',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Text('Select Dice Image:'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(diceImages.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        diceRoll = index + 1; // Set the selected dice image
+                      });
+                      Navigator.pop(context); // Close the settings
+                    },
+                    child: Image.asset(
+                      diceImages[index],
+                      width: 50,
+                      height: 50,
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(height: 20),
+              Text('Change Player Colors:'),
+              ...List.generate(4, (index) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Player ${index + 1}:'),
+                    Container(
+                      width: 30,
+                      height: 30,
+                      color: playerColors[index],
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.color_lens),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Select Color for Player ${index + 1}'),
+                              content: SingleChildScrollView(
+                                child: BlockPicker(
+                                  pickerColor: playerColors[index],
+                                  onColorChanged: (color) {
+                                    setState(() {
+                                      playerColors[index] = color;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dice Rolling Game'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: openSettings, // Open settings sidebar
+          ),
+        ],
       ),
       body: Stack(
         children: [
-          // Player 1 (Top Left)
+          // Background Color or Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('images/ludo_background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Player Boxes
           Positioned(
-            top: 20,
+            top: 40,
             left: 20,
-            child: playerInfo(0, 'Player 1', playerBackgroundColor),
+            child: playerInfoBox(0, widget.playerNames[0], scores[0], turnsTaken[0], playerColors[0]),
           ),
-          // Player 2 (Top Right)
           Positioned(
-            top: 20,
+            top: 40,
             right: 20,
-            child: playerInfo(1, 'Player 2', playerBackgroundColor),
+            child: playerInfoBox(1, widget.playerNames[1], scores[1], turnsTaken[1], playerColors[1]),
           ),
-          // Player 3 (Bottom Left)
           Positioned(
-            bottom: 20,
+            bottom: 40,
             left: 20,
-            child: playerInfo(2, 'Player 3', playerBackgroundColor),
+            child: playerInfoBox(2, widget.playerNames[2], scores[2], turnsTaken[2], playerColors[2]),
           ),
-          // Player 4 (Bottom Right)
           Positioned(
-            bottom: 20,
+            bottom: 40,
             right: 20,
-            child: playerInfo(3, 'Player 4', playerBackgroundColor),
+            child: playerInfoBox(3, widget.playerNames[3], scores[3], turnsTaken[3], playerColors[3]),
           ),
           // Dice Button (Center)
           if (!gameOver) Center(
@@ -130,7 +308,7 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Player ${currentPlayer + 1}\'s Turn',
+                  message,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.purple),
                 ),
                 SizedBox(height: 20),
@@ -178,7 +356,7 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
                       rounds = 0;
                       scores.fillRange(0, 4, 0);
                       turnsTaken.fillRange(0, 4, 0);
-                      message = "Player 1's Turn";
+                      message = "${widget.playerNames[0]}'s Turn";
                       gameOver = false;
                       diceRoll = 1;
                     });
@@ -195,27 +373,27 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
     );
   }
 
-  // Player Info widget
-  Widget playerInfo(int playerIndex, String playerName, Color backgroundColor) {
+  // Player Info Box
+  Widget playerInfoBox(int playerIndex, String playerName, int score, int turns, Color color) {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: color,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           Text(
             playerName,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: playerTextColor),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Text(
-            'Score: ${scores[playerIndex]}',
-            style: TextStyle(fontSize: 18, color: playerTextColor),
+            'Score: $score',
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
           Text(
-            'Turns taken: ${turnsTaken[playerIndex]}',
-            style: TextStyle(fontSize: 18, color: playerTextColor),
+            'Turns: $turns',
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
         ],
       ),

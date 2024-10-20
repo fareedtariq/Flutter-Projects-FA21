@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(CoinFlipApp());
@@ -9,35 +9,175 @@ class CoinFlipApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Coin Flip Game',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: CoinFlipScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final List<TextEditingController> _controllers =
+  List.generate(4, (index) => TextEditingController());
+
+  void _startGame() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              CoinFlipScreen(players: _controllers.map((controller) => controller.text).toList())),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Coin Flip Game'),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.orange, Colors.redAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            for (int i = 0; i < 4; i++)
+              TextField(
+                controller: _controllers[i],
+                decoration: InputDecoration(
+                  labelText: 'Player ${i + 1} Name',
+                  fillColor: Colors.white,
+                  filled: true,
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+              onPressed: _startGame,
+              child: Text('Start Game', style: TextStyle(fontSize: 20)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class CoinFlipScreen extends StatefulWidget {
+  final List<String> players;
+
+  CoinFlipScreen({required this.players});
+
   @override
   _CoinFlipScreenState createState() => _CoinFlipScreenState();
 }
 
-class _CoinFlipScreenState extends State<CoinFlipScreen>
-    with SingleTickerProviderStateMixin {
-  final List<String> players = ['Player 1', 'Player 2', 'Player 3', 'Player 4'];
-  final List<String> options = ['Heads', 'Tails'];
-  final List<String?> playerGuesses = [null, null, null, null];
-  final List<int> playerScores = [0, 0, 0, 0];
-  String coinResult = '';
-  bool isFlipping = false;
-  bool showWinner = false;
+class _CoinFlipScreenState extends State<CoinFlipScreen> {
+  int _currentPlayer = 0;
+  String _result = '';
+  String _coinImage = 'assets/images/head.png'; // Default image
+  bool _isFlipping = false;
+
+  void _flipCoin() {
+    if (_currentPlayer < widget.players.length && !_isFlipping) {
+      setState(() {
+        _isFlipping = true;
+        _result = '';
+        _coinImage = 'assets/images/coin_flipping.gif'; // Change to a coin flipping animation
+      });
+
+      Future.delayed(Duration(seconds: 2), () {
+        final bool isHeads = Random().nextBool();
+        final outcome = isHeads ? 'Heads' : 'Tails';
+        setState(() {
+          _result = '${widget.players[_currentPlayer]} flipped: $outcome';
+          _coinImage = isHeads ? 'assets/images/head.png' : 'assets/images/tail.png'; // Set the image based on result
+          _currentPlayer++;
+          _isFlipping = false;
+        });
+      });
+    } else {
+      // After all players have flipped
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => WinnerScreen(winner: widget.players[Random().nextInt(widget.players.length)])),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Coin Flip')),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/coin_background.png'), // Use a background image
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(_coinImage, width: 100, height: 100), // Display the coin image
+              SizedBox(height: 20),
+              Text(_result, style: TextStyle(fontSize: 24, color: Colors.white)),
+              SizedBox(height: 20),
+              FloatingActionButton(
+                onPressed: _flipCoin,
+                child: Icon(Icons.attach_money),
+                backgroundColor: Colors.blueAccent,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WinnerScreen extends StatefulWidget {
+  final String winner;
+
+  WinnerScreen({required this.winner});
+
+  @override
+  _WinnerScreenState createState() => _WinnerScreenState();
+}
+
+class _WinnerScreenState extends State<WinnerScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: Duration(seconds: 1));
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 1.0, end: 1.5).animate(_controller);
   }
 
   @override
@@ -46,122 +186,28 @@ class _CoinFlipScreenState extends State<CoinFlipScreen>
     super.dispose();
   }
 
-  void flipCoin() {
-    setState(() {
-      isFlipping = true;
-      showWinner = false; // Hide winner message before flipping
-      _controller.forward(from: 0);
-    });
-
-    Future.delayed(Duration(seconds: 1), () {
-      String result = options[Random().nextInt(2)];
-      setState(() {
-        coinResult = result;
-        isFlipping = false;
-
-        // Update player scores based on their guesses
-        for (int i = 0; i < players.length; i++) {
-          if (playerGuesses[i] == coinResult) {
-            playerScores[i]++;
-          }
-        }
-
-        // Show winner message
-        showWinner = true;
-      });
-    });
-  }
-
-  void resetGame() {
-    setState(() {
-      playerScores.fillRange(0, players.length, 0);
-      playerGuesses.fillRange(0, players.length, null);
-      coinResult = '';
-      showWinner = false; // Reset winner display
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Coin Flip Game')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Player UI in a Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(players.length, (i) {
-              return Column(
-                children: [
-                  Text(players[i], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Row(
-                    children: options.map((option) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: ElevatedButton(
-                          onPressed: coinResult.isNotEmpty ? null : () {
-                            setState(() {
-                              playerGuesses[i] = option; // Update player's guess
-                            });
-                          },
-                          child: Text(option),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  Text('Score: ${playerScores[i]}', style: TextStyle(fontSize: 18)),
-                ],
-              );
-            }),
+      appBar: AppBar(title: Text('Winner')),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple, Colors.pinkAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          SizedBox(height: 20), // Space between players and coin
-          // Coin Animation
-          Center(
-            child: isFlipping
-                ? RotationTransition(
-              turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-              child: Image.asset(
-                'images/coin.png', // Use your coin image path
-                width: 100,
-                height: 100,
-              ),
-            )
-                : Text(
-              coinResult.isEmpty ? 'Make your guesses!' : 'Coin Result: $coinResult',
-              style: TextStyle(fontSize: 24),
+        ),
+        child: Center(
+          child: ScaleTransition(
+            scale: _animation,
+            child: Text(
+              '${widget.winner} is the winner!',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+              textAlign: TextAlign.center,
             ),
           ),
-          // Display the winner if applicable
-          if (showWinner) ...[
-            SizedBox(height: 20), // Space before showing the winner
-            Container(
-              color: Colors.green,
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    'Winner(s): ${playerGuesses.asMap().entries.where((entry) => entry.value == coinResult).map((entry) => players[entry.key]).join(', ')}',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  SizedBox(height: 10), // Space between winner text and button
-                  ElevatedButton(
-                    onPressed: resetGame,
-                    child: Text('Restart Game'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          // Flip Coin Button
-          SizedBox(height: 20), // Space before the button
-          // Only show the Flip Coin button if no winner is displayed
-          if (!showWinner)
-            ElevatedButton(
-              onPressed: isFlipping ? null : flipCoin,
-              child: Text('Flip Coin'),
-            ),
-        ],
+        ),
       ),
     );
   }
