@@ -7,10 +7,12 @@
 <li>Enter names for up to four players.</li>
 <li>Enjoy a flipping coin animation as players take turns.</li>
 <li>See the result of each player's flip (Heads or Tails).</li>
-<li>At the end of the game, a random winner is announced with an animated display.</li>
+<li>At the end of the game, a random winner is announced with an dialog box.</li>
 <li>The app has vibrant gradients and themed backgrounds for an attractive look.</li>
 </ul>
 
-<h3>Screenshot 1</h3>
+<h3>Screenshot 1![coin1](https://github.com/user-attachments/assets/8156c2dc-b19c-4a9b-9d8d-726aad792ba3)
+</h3>
 
-<h3>Screenshot 2</h3>
+<h3>Screenshot 2![coin2](https://github.com/user-attachments/assets/ebbbb276-d53d-4f20-9b4d-978ea1605038)
+ </h3>
