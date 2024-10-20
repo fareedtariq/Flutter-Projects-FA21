@@ -12,7 +12,8 @@
 <h2>Screenshot </h2>
 
 
-![image 1](https://github.com/user-attachments/assets/d78e5d71-b6ed-4ee1-ac18-6d7cbd1f2638)
+![Screenshot 2024-10-20 164829](https://github.com/user-attachments/assets/42c26719-b67a-4b9e-b572-17edef05ec94)
+
 
 
 <h3>Usage</h3>
