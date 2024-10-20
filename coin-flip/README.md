@@ -1,16 +1,16 @@
-# heads_tails
+<h1>Coin Flip Game</h1>
 
-A new Flutter project.
+<p>Welcome to the Coin Flip Game! This Flutter app allows you to flip a coin among four players, keeping track of each player's flips and announcing a winner at the end. The app features animations, user-friendly design, and colorful backgrounds.</p>
 
-## Getting Started
+<h2>Features</h2>
+<ul>
+<li>Enter names for up to four players.</li>
+<li>Enjoy a flipping coin animation as players take turns.</li>
+<li>See the result of each player's flip (Heads or Tails).</li>
+<li>At the end of the game, a random winner is announced with an animated display.</li>
+<li>The app has vibrant gradients and themed backgrounds for an attractive look.</li>
+</ul>
 
-This project is a starting point for a Flutter application.
+<h3>Screenshot 1</h3>
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h3>Screenshot 2</h3>
