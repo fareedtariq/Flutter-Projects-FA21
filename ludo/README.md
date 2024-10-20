@@ -1,4 +1,4 @@
-![Screenshot 2024-10-20 171434](https://github.com/user-attachments/assets/9048e494-cdca-4992-baee-11344fcf0698)<h1>Dice Rolling Game</h1>
+<h1>Dice Rolling Game</h1>
 
 <p>Welcome to the "Dice Rolling Game", a fun and interactive multiplayer game built with Flutter! In this game, players take turns rolling a dice and accumulating scores over several rounds. The player with the highest score at the end of the game wins!</p>
 
