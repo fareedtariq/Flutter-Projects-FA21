@@ -12,8 +12,10 @@
 </ul>
 
 <h3>Screenshot 1 </h3>
-![coin1](https://github.com/user-attachments/assets/8156c2dc-b19c-4a9b-9d8d-726aad792ba3)
+
+![coin1](https://github.com/user-attachments/assets/1960eb6f-b3bb-4fb0-b044-762c5da88974)
 
 
 <h3>Screenshot 2 </h3>
+
 ![coin2](https://github.com/user-attachments/assets/ebbbb276-d53d-4f20-9b4d-978ea1605038)
