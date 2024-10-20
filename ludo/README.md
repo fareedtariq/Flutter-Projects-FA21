@@ -1,16 +1,19 @@
-# dice_rolling
+<h1>Dice Rolling Game</h1>
 
-A new Flutter project.
+<p>Welcome to the "Dice Rolling Game", a fun and interactive multiplayer game built with Flutter! In this game, players take turns rolling a dice and accumulating scores over several rounds. The player with the highest score at the end of the game wins!</p>
 
-## Getting Started
+ <h2>Features</h2>
+<ul>
+<li>Enter player names for up to four players.</li>
+ <li>Roll a virtual dice with customizable images.</li>
+<li>Track player scores and turns.</li>
+<li>Colorful and engaging user interface.</li>
+<li>Settings to customize player colors and dice images.</li>
+<li>Restart the game at any time.</li>
+</ul>
 
-This project is a starting point for a Flutter application.
+<h3>Screenshot 1</h3>
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h3>Screenshot 2</h3>
