@@ -80,9 +80,14 @@ class _DiceScreenState extends State<DiceScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ludo Dice'),
+        title: Text(
+          'Ludo Dice',
+          style: TextStyle(fontFamily: 'Cursive', fontSize: 28),
+        ),
         backgroundColor: Colors.redAccent,
       ),
       backgroundColor: Colors.white,
@@ -98,17 +103,19 @@ class _DiceScreenState extends State<DiceScreen> with TickerProviderStateMixin {
                   'images/dice-$_diceNumber1.png',
                   _isRolling1,
                   _rollDice1,
+                  screenWidth / 2 - 40, // Dynamically size the dice
                 ),
-                SizedBox(width: 100),
+                SizedBox(width: screenWidth * 0.1),
                 _buildDiceColumn(
                   'Rolling Number: $_diceNumber2',
                   'images/dice-$_diceNumber2.png',
                   _isRolling2,
                   _rollDice2,
+                  screenWidth / 2 - 40,
                 ),
               ],
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -117,13 +124,15 @@ class _DiceScreenState extends State<DiceScreen> with TickerProviderStateMixin {
                   'images/dice-$_diceNumber3.png',
                   _isRolling3,
                   _rollDice3,
+                  screenWidth / 2 - 40,
                 ),
-                SizedBox(width: 100),
+                SizedBox(width: screenWidth * 0.1),
                 _buildDiceColumn(
                   'Rolling Number: $_diceNumber4',
                   'images/dice-$_diceNumber4.png',
                   _isRolling4,
                   _rollDice4,
+                  screenWidth / 2 - 40,
                 ),
               ],
             ),
@@ -133,7 +142,7 @@ class _DiceScreenState extends State<DiceScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildDiceColumn(String text, String imagePath, bool isRolling, VoidCallback onPressed) {
+  Widget _buildDiceColumn(String text, String imagePath, bool isRolling, VoidCallback onPressed, double imageSize) {
     return Column(
       children: [
         Text(
@@ -149,16 +158,22 @@ class _DiceScreenState extends State<DiceScreen> with TickerProviderStateMixin {
             duration: _animationDuration,
             child: Image.asset(
               imagePath,
-              height: 100,
+              height: imageSize,
             ),
           ),
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         ElevatedButton(
-
           onPressed: onPressed,
-          child: Text(' Roll the Dice '),
-
+          child: Text(
+            'Roll the Dice',
+            style: TextStyle(fontSize: 16, fontFamily: 'Cursive'),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // Background color
+            disabledBackgroundColor: Colors.white, // Text color
+            shadowColor: Colors.greenAccent, // Shadow color
+          ),
         ),
       ],
     );

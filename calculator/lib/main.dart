@@ -1,429 +1,542 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'dart:math'; // For quadratic equation solver
-// For age calculation
 
 void main() {
-  runApp(MyApp());
+  runApp(SpinBottleGame());
 }
 
-class MyApp extends StatelessWidget {
+class SpinBottleGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CalculatorApp(),
+      home: SpinBottleHome(),
     );
   }
 }
 
-class CalculatorApp extends StatefulWidget {
+class SpinBottleHome extends StatefulWidget {
   @override
-  _CalculatorAppState createState() => _CalculatorAppState();
+  _SpinBottleHomeState createState() => _SpinBottleHomeState();
 }
 
-class _CalculatorAppState extends State<CalculatorApp> {
-  String selectedCalculator = 'BMI Calculator';
-  final List<String> calculators = [
-    'BMI Calculator',
-    'Tip Calculator',
-    'Age Calculator',
-    'Currency Converter',
-    'Quadratic Equation Solver',
-    'Temperature Converter',
-    'Speed Distance Time Calculator',
-    'Discount Calculator',
-    'Fuel Efficiency Calculator',
+class _SpinBottleHomeState extends State<SpinBottleHome>
+    with SingleTickerProviderStateMixin {
+  final List<Color> playerColors = [
+    Colors.redAccent,
+    Colors.greenAccent,
+    Colors.blueAccent,
+    Colors.yellowAccent,
+    Colors.purpleAccent,
+    Colors.orangeAccent,
+    Colors.tealAccent,
+    Colors.deepOrangeAccent,
+    Colors.cyanAccent,
+    Colors.indigoAccent,
   ];
 
-  // Controllers for various input fields
-  TextEditingController weightController = TextEditingController();
-  TextEditingController heightController = TextEditingController();
-  TextEditingController billController = TextEditingController();
-  TextEditingController tipController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController discountController = TextEditingController();
-  TextEditingController distanceController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
-  TextEditingController fuelController = TextEditingController();
-  TextEditingController coeffAController = TextEditingController();
-  TextEditingController coeffBController = TextEditingController();
-  TextEditingController coeffCController = TextEditingController();
-  TextEditingController celsiusController = TextEditingController();
+  List<String> playerNames = List.generate(10, (index) => "Player ${index + 1}");
+  bool spinning = false;
+  String selectedPlayer = "";
+  bool showNameInput = true;
+  String selectedBottleImage = 'assets/wine.jpg'; // Default bottle image
 
-  // Currency converter variables
-  TextEditingController amountController = TextEditingController();
-  String selectedCurrency = 'EUR';
-  Map<String, double> exchangeRates = {
-    'USD': 1.0,
-    'EUR': 0.85,
-    'INR': 73.5,
-    'GBP': 0.75
-  };
-  String convertedAmount = '';
+  AnimationController? _controller;
+  double _currentRotation = 0;
+  double _targetRotation = 0;
 
-  // Results for various calculators
-  String _bmiResult = '';
-  String _tipResult = '';
-  String _ageResult = '';
-  String _finalPrice = '';
-  String _fuelEfficiencyResult = '';
-  String _quadraticRoots = '';
-  String _tempConversionResult = '';
-  String _speedDistanceTimeResult = '';
+  // Predefined challenges
+  List<String> challenges = [
+    "Do 10 pushups",
+    "Sing a song",
+    "Tell a joke",
+    "Dance for 30 seconds",
+    "Imitate an animal",
+    "Share a secret",
+    "Do your best impression of a celebrity",
+    "Act like a robot for 1 minute",
+    "Do a silly walk",
+    "Say the alphabet backwards"
+  ];
 
-  // Methods for each calculator
-  void calculateBMI() {
-    double weight = double.tryParse(weightController.text) ?? 10;
-    double height = double.tryParse(heightController.text) ?? 10;
-    if (weight > 0 && height > 0) {
-      double bmi = weight / pow(height, 2);
-      setState(() {
-        _bmiResult = "Your BMI is ${bmi.toString()}";
-      });
-    } else {
-      setState(() {
-        _bmiResult = "Invalid input. Please enter valid weight and height.";
-      });
-    }
-  }
+  String selectedChallenge = "";
 
-  void calculateTip() {
-    double bill = double.tryParse(billController.text) ?? 0;
-    double tipPercent = double.tryParse(tipController.text) ?? 0;
-    if (bill > 0 && tipPercent >= 0) {
-      double tip = bill * (tipPercent / 100);
-      setState(() {
-        _tipResult = "Total with tip: ${(bill + tip).toStringAsFixed(2)}";
-      });
-    } else {
-      setState(() {
-        _tipResult =
-        "Invalid input. Please enter valid bill and tip percentage.";
-      });
-    }
-  }
+  @override
+  @override
+  void initState() {
+    super.initState();
 
-  void calculateAge() {
-    try {
-      DateTime dob = DateTime.parse(dobController.text);
-      DateTime today = DateTime.now();
-      Duration difference = today.difference(dob);
-      int years = difference.inDays ~/ 365;
-      int months = (difference.inDays % 365) ~/ 30;
-      int days = (difference.inDays % 365) % 30;
-      setState(() {
-        _ageResult = "$years years, $months months, $days days old";
-      });
-    } catch (e) {
-      setState(() {
-        _ageResult = "Invalid date. Please enter a valid date.";
-      });
-    }
-  }
+    // Print the initial player names and challenges for debugging
+    print('Player Names: $playerNames');
+    print('Challenges: $challenges');
 
-  void calculateDiscount() {
-    double price = double.tryParse(priceController.text) ?? 0;
-    double discount = double.tryParse(discountController.text) ?? 0;
-    if (price > 0 && discount >= 0) {
-      double finalPrice = price - (price * discount / 100);
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    )..addListener(() {
       setState(() {
-        _finalPrice = "Final Price: ${finalPrice.toStringAsFixed(2)}";
+        _currentRotation = _controller!.value * _targetRotation;
       });
-    } else {
-      setState(() {
-        _finalPrice =
-        "Invalid input. Please enter valid price and discount percentage.";
-      });
-    }
-  }
-
-  void calculateFuelEfficiency() {
-    double distance = double.tryParse(distanceController.text) ?? 0;
-    double fuel = double.tryParse(fuelController.text) ?? 0;
-    if (distance > 0 && fuel > 0) {
-      double efficiency = distance / fuel;
-      setState(() {
-        _fuelEfficiencyResult =
-        "Fuel Efficiency: ${efficiency.toStringAsFixed(2)} km/l";
-      });
-    } else {
-      setState(() {
-        _fuelEfficiencyResult =
-        "Invalid input. Please enter valid distance and fuel.";
-      });
-    }
-  }
-
-  void solveQuadraticEquation() {
-    double a = double.tryParse(coeffAController.text) ?? 0;
-    double b = double.tryParse(coeffBController.text) ?? 0;
-    double c = double.tryParse(coeffCController.text) ?? 0;
-    if (a != 0) {
-      double discriminant = b * b - 4 * a * c;
-      if (discriminant < 0) {
-        setState(() {
-          _quadraticRoots = "No real roots";
-        });
-      } else {
-        double root1 = (-b + sqrt(discriminant)) / (2 * a);
-        double root2 = (-b - sqrt(discriminant)) / (2 * a);
-        setState(() {
-          _quadraticRoots =
-          "Roots: ${root1.toStringAsFixed(2)}, ${root2.toStringAsFixed(2)}";
-        });
-      }
-    } else {
-      setState(() {
-        _quadraticRoots = "Invalid input. Coefficient 'a' cannot be 0.";
-      });
-    }
-  }
-
-  void convertTemperature() {
-    double celsius = double.tryParse(celsiusController.text) ?? 0;
-    setState(() {
-      _tempConversionResult =
-      "Fahrenheit: ${(celsius * 9 / 5 + 32).toStringAsFixed(
-          2)}, Kelvin: ${(celsius + 273.15).toStringAsFixed(2)}";
     });
   }
 
-  void convertCurrency() {
-    double amount = double.tryParse(amountController.text) ?? 0;
-    double conversionRate = exchangeRates[selectedCurrency] ?? 1.0;
-    if (amount > 0) {
-      double converted = amount * conversionRate;
-      setState(() {
-        convertedAmount =
-        "$amount USD = ${converted.toStringAsFixed(2)} $selectedCurrency";
-      });
-    } else {
-      setState(() {
-        convertedAmount = "Invalid input. Please enter a valid amount.";
-      });
-    }
-  }
-
-  // This widget builds the calculator UI based on selected option
-  Widget buildCalculatorUI() {
-    switch (selectedCalculator) {
-      case 'BMI Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: weightController,
-              decoration: InputDecoration(labelText: 'Weight (kg)'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: heightController,
-              decoration: InputDecoration(labelText: 'Height (m)'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-                onPressed: calculateBMI, child: Text("Calculate BMI")),
-            Text(_bmiResult),
-          ],
-        );
-      case 'Tip Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: billController,
-              decoration: InputDecoration(labelText: 'Bill Amount'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: tipController,
-              decoration: InputDecoration(labelText: 'Tip Percentage'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-                onPressed: calculateTip, child: Text("Calculate Tip")),
-            Text(_tipResult),
-          ],
-        );
-      case 'Age Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: dobController,
-              decoration: InputDecoration(
-                  labelText: 'Date of Birth (YYYY-MM-DD)'),
-              keyboardType: TextInputType.datetime,
-            ),
-            ElevatedButton(
-                onPressed: calculateAge, child: Text("Calculate Age")),
-            Text(_ageResult),
-          ],
-        );
-      case 'Currency Converter':
-        return Column(
-          children: [
-            TextField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: 'Amount in USD'),
-              keyboardType: TextInputType.number,
-            ),
-            DropdownButton<String>(
-              value: selectedCurrency,
-              items: exchangeRates.keys.map((String currency) {
-                return DropdownMenuItem<String>(
-                  value: currency,
-                  child: Text(currency),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCurrency = value ?? 'EUR';
-                });
-              },
-            ),
-            ElevatedButton(
-                onPressed: convertCurrency, child: Text("Convert Currency")),
-            Text(convertedAmount),
-          ],
-        );
-      case 'Quadratic Equation Solver':
-        return Column(
-          children: [
-            TextField(
-              controller: coeffAController,
-              decoration: InputDecoration(labelText: 'Coefficient a'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: coeffBController,
-              decoration: InputDecoration(labelText: 'Coefficient b'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: coeffCController,
-              decoration: InputDecoration(labelText: 'Coefficient c'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(onPressed: solveQuadraticEquation,
-                child: Text("Solve Equation")),
-            Text(_quadraticRoots),
-          ],
-        );
-      case 'Temperature Converter':
-        return Column(
-          children: [
-            TextField(
-              controller: celsiusController,
-              decoration: InputDecoration(labelText: 'Temperature in Celsius'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(onPressed: convertTemperature,
-                child: Text("Convert Temperature")),
-            Text(_tempConversionResult),
-          ],
-        );
-      case 'Speed Distance Time Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: distanceController,
-              decoration: InputDecoration(labelText: 'Distance (km)'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: timeController,
-              decoration: InputDecoration(labelText: 'Time (hours)'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(onPressed: () {
-              double distance = double.tryParse(distanceController.text) ?? 0;
-              double time = double.tryParse(timeController.text) ?? 0;
-              if (distance > 0 && time > 0) {
-                double speed = distance / time;
-                setState(() {
-                  _speedDistanceTimeResult =
-                  "Speed: ${speed.toStringAsFixed(2)} km/h";
-                });
-              } else {
-                setState(() {
-                  _speedDistanceTimeResult =
-                  "Invalid input. Please enter valid distance and time.";
-                });
-              }
-            }, child: Text("Calculate Speed")),
-            Text(_speedDistanceTimeResult),
-          ],
-        );
-      case 'Discount Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: priceController,
-              decoration: InputDecoration(labelText: 'Original Price'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: discountController,
-              decoration: InputDecoration(labelText: 'Discount Percentage'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(onPressed: calculateDiscount,
-                child: Text("Calculate Discount")),
-            Text(_finalPrice),
-          ],
-        );
-      case 'Fuel Efficiency Calculator':
-        return Column(
-          children: [
-            TextField(
-              controller: distanceController,
-              decoration: InputDecoration(labelText: 'Distance (km)'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: fuelController,
-              decoration: InputDecoration(labelText: 'Fuel Used (liters)'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(onPressed: calculateFuelEfficiency,
-                child: Text("Calculate Efficiency")),
-            Text(_fuelEfficiencyResult),
-          ],
-        );
-      default:
-        return Container();
-    }
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Multi-Calculator App"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            DropdownButton<String>(
-              value: selectedCalculator,
-              items: calculators.map((String calculator) {
-                return DropdownMenuItem<String>(
-                  value: calculator,
-                  child: Text(calculator),
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  // Prevent back navigation while spinning
+  Future<bool> _onWillPop() async {
+    if (spinning) {
+      return false; // Prevent back navigation if spinning
+    } else {
+      return true; // Allow back navigation if not spinning
+    }
+  }
+
+
+  void spinBottle() {
+    setState(() {
+      spinning = true;
+
+      // Calculate the angle each player occupies on the circle
+      double playerAngle = (2 * pi) / playerNames.length;
+
+      // Generate a random index for the selected player
+      Random random = Random();
+      int selectedPlayerIndex = random.nextInt(playerNames.length);
+      double stopAngle = selectedPlayerIndex * playerAngle;
+
+      // Calculate the rotation target for smooth spinning
+      _targetRotation =
+          _currentRotation + 4 * pi + stopAngle - (_currentRotation % (2 * pi));
+
+      _controller?.reset();
+
+      // Start the animation and handle completion
+      _controller?.forward().then((_) {
+        setState(() {
+          spinning = false;
+
+          // Assign selected player and challenge after spinning completes
+          // Adjust the index calculation to ensure correct display
+          selectedPlayer = playerNames[selectedPlayerIndex];
+          selectedChallenge = challenges[selectedPlayerIndex % challenges.length];
+
+          // Logging the results for debugging
+          print('Spin completed:');
+          print('Randomly selected player index: $selectedPlayerIndex');
+          print('Selected Player: $selectedPlayer');
+          print('Selected Challenge: $selectedChallenge');
+        });
+      });
+    });
+  }
+
+
+  Widget buildPlayerNames() {
+    return ListView.builder(
+      itemCount: playerNames.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: TextField(
+            controller: TextEditingController(text: playerNames[index]),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.9),
+              labelText: "Player ${index + 1} Name",
+              labelStyle: TextStyle(
+                color: Colors.deepPurple,
+                fontWeight: FontWeight.bold,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: Colors.deepPurple, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 3),
+              ),
+            ),
+            onChanged: (value) {
+              playerNames[index] = value.isNotEmpty ? value : "Player ${index + 1}";
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildWheel() {
+    return Stack(
+      alignment: Alignment.center,
+      children: List.generate(playerNames.length, (index) {
+        final angle = (index / playerNames.length) * 2 * pi;
+        return Transform.translate(
+          offset: Offset(
+            120 * cos(angle),
+            120 * sin(angle),
+          ),
+          child: CircleAvatar(
+            radius: 40,
+            backgroundColor: playerColors[index % playerColors.length],
+            child: Text(
+              playerNames[index],
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  void selectBottle() async {
+    String? selected = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select a Bottle"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                ListTile(
+                  leading: Image.asset('assets/wine.jpg', width: 50, height: 50),
+                  title: Text("Wine Bottle"),
+                  onTap: () {
+                    Navigator.of(context).pop('assets/wine.jpg');
+                  },
+                ),
+                ListTile(
+                  leading: Image.asset('assets/AB.png', width: 50, height: 50),
+                  title: Text("Green Bottle"),
+                  onTap: () {
+                    Navigator.of(context).pop('assets/AB.png');
+                  },
+                ),
+                ListTile(
+                  leading: Image.asset('assets/Bo.jpg', width: 50, height: 50),
+                  title: Text("Juice Bottle"),
+                  onTap: () {
+                    Navigator.of(context).pop('assets/Bo.jpg');
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        selectedBottleImage = selected;
+      });
+    }
+  }
+
+  void changePlayerColor() async {
+    Color? selectedColor = await showDialog<Color>(
+      context: context,
+      builder: (BuildContext context) {
+        Color color = Colors.redAccent; // Default color
+        return AlertDialog(
+          title: Text("Select Player Color"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: playerColors.map((color) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(color);
+                  },
+                  child: Container(
+                    height: 50,
+                    color: color,
+                    child: Center(
+                      child: Text(
+                        "Select",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
                 );
               }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCalculator = value ?? 'BMI Calculator';
-                });
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedColor != null) {
+      setState(() {
+        for (int i = 0; i < playerColors.length; i++) {
+          if (i < playerNames.length) {
+            playerColors[i] = selectedColor;
+          }
+        }
+      });
+    }
+  }
+
+  void showSettings() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Settings"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                ListTile(
+                  title: Text("Edit Player Names"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Edit Player Names"),
+                          content: Container(
+                            width: double.maxFinite,
+                            child: buildPlayerNames(), // Display the player names for editing
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the edit dialog
+                              },
+                              child: Text("Done"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Change Colors"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    changePlayerColor(); // Call the function to change colors
+                  },
+                ),
+                ListTile(
+                  title: Text("Choose Bottle"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    selectBottle(); // Call the function to select a bottle
+                  },
+                ),
+                ListTile(
+                  title: Text("Edit Tasks"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    editTasks(); // Call the function to edit tasks
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void editTasks() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Edit Tasks"),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: challenges.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Task ${index + 1}",
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      challenges[index] = value; // Update the task
+                    },
+                    controller: TextEditingController(text: challenges[index]),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        challenges.removeAt(index); // Remove the task
+                      });
+                    },
+                  ),
+                );
               },
             ),
-            Expanded(
-              child: buildCalculatorUI(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Close"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  challenges.add("New Task"); // Add a new task placeholder
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                editTasks(); // Open the dialog again to add new tasks
+              },
+              child: Text("Add Task"),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget fadeIn({required Widget child}) {
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: Duration(seconds: 1),
+      builder: (context, double opacity, _) {
+        return Opacity(
+          opacity: opacity,
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget buildSpinBottlePage() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Spin & Share",
+          style: TextStyle(
+            fontSize: 26, // Increase font size for more impact
+            fontWeight: FontWeight.bold, // Make the text bold
+            color: Colors.yellowAccent, // Change text color
+            letterSpacing: 2, // Increase letter spacing
+            shadows: [
+              Shadow(
+                blurRadius: 3.0,
+                color: Colors.black.withOpacity(0.6),
+                offset: Offset(2.0, 2.0),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        elevation: 5,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings, color: Colors.white),
+            onPressed: showSettings,
+          ),
+        ],
+      ),
+
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.purpleAccent,
+              Colors.blueAccent,
+              Colors.greenAccent,
+              Colors.orangeAccent,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showNameInput
+                  ? Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: buildPlayerNames(),
+                ),
+              )
+                  : Expanded(
+                child: fadeIn(
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform.rotate(
+                          angle: _currentRotation,
+                          child: Image.asset(
+                            selectedBottleImage,
+                            width: 150,
+                            height: 150,
+                          ),
+                        ),
+                        buildWheel(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (!spinning && !showNameInput)
+                Column(
+                  children: [
+                    Text(
+                      selectedPlayer.isEmpty
+                          ? "Tap Spin to start!"
+                          : "$selectedPlayer's turn\nChallenge: $selectedChallenge",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ElevatedButton(
+                onPressed: showNameInput
+                    ? () {
+                  setState(() {
+                    showNameInput = false;
+                  });
+                }
+                    : !spinning
+                    ? spinBottle
+                    : null,
+                child: Text(
+                  showNameInput ? "Start Game" : "Spin",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return buildSpinBottlePage();
   }
 }

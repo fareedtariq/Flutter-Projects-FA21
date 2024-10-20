@@ -39,7 +39,7 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
   bool spinning = false;
   String selectedPlayer = "";
   bool showNameInput = true;
-  String selectedBottleImage = 'images/wine.jpg'; // Default bottle image
+  String selectedBottleImage = 'assets/wine.jpg'; // Default bottle image
 
   AnimationController? _controller;
   double _currentRotation = 0;
@@ -62,8 +62,14 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
   String selectedChallenge = "";
 
   @override
+  @override
   void initState() {
     super.initState();
+
+    // Print the initial player names and challenges for debugging
+    print('Player Names: $playerNames');
+    print('Challenges: $challenges');
+
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 3),
@@ -73,6 +79,7 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
       });
     });
   }
+
 
   @override
   void dispose() {
@@ -89,32 +96,45 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
     }
   }
 
+
   void spinBottle() {
     setState(() {
       spinning = true;
 
-      // The angle each player occupies on the circle
+      // Calculate the angle each player occupies on the circle
       double playerAngle = (2 * pi) / playerNames.length;
 
-      // Randomly select the player index and calculate stop angle
+      // Generate a random index for the selected player
       Random random = Random();
       int selectedPlayerIndex = random.nextInt(playerNames.length);
       double stopAngle = selectedPlayerIndex * playerAngle;
 
-      // Calculate the rotation target, including multiple spins for smoothness
-      _targetRotation = _currentRotation + 4 * pi + stopAngle - _currentRotation % (2 * pi);
+      // Calculate the rotation target for smooth spinning
+      _targetRotation =
+          _currentRotation + 4 * pi + stopAngle - (_currentRotation % (2 * pi));
 
       _controller?.reset();
-      _controller?.forward().then((value) {
+
+      // Start the animation and handle completion
+      _controller?.forward().then((_) {
         setState(() {
           spinning = false;
-          // Now set the selected player once the spinning is done
+
+          // Assign selected player and challenge after spinning completes
+          // Adjust the index calculation to ensure correct display
           selectedPlayer = playerNames[selectedPlayerIndex];
-          selectedChallenge = challenges[random.nextInt(challenges.length)];
+          selectedChallenge = challenges[selectedPlayerIndex % challenges.length];
+
+          // Logging the results for debugging
+          print('Spin completed:');
+          print('Randomly selected player index: $selectedPlayerIndex');
+          print('Selected Player: $selectedPlayer');
+          print('Selected Challenge: $selectedChallenge');
         });
       });
     });
   }
+
 
   Widget buildPlayerNames() {
     return ListView.builder(
@@ -123,6 +143,7 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
           child: TextField(
+            controller: TextEditingController(text: playerNames[index]),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               filled: true,
@@ -142,8 +163,7 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
               ),
             ),
             onChanged: (value) {
-              playerNames[index] =
-              value.isNotEmpty ? value : "Player ${index + 1}";
+              playerNames[index] = value.isNotEmpty ? value : "Player ${index + 1}";
             },
           ),
         );
@@ -189,38 +209,24 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
             child: ListBody(
               children: [
                 ListTile(
-                  leading: Image.asset('images/wine.png', width: 50, height: 50),
+                  leading: Image.asset('assets/wine.jpg', width: 50, height: 50),
                   title: Text("Wine Bottle"),
                   onTap: () {
-                    Navigator.of(context).pop('images/wine.png');
+                    Navigator.of(context).pop('assets/wine.jpg');
                   },
                 ),
                 ListTile(
-                  leading: Image.asset('images/green.png', width: 50, height: 50),
+                  leading: Image.asset('assets/AB.png', width: 50, height: 50),
                   title: Text("Green Bottle"),
                   onTap: () {
-                    Navigator.of(context).pop('images/green.png');
+                    Navigator.of(context).pop('assets/AB.png');
                   },
                 ),
                 ListTile(
-                  leading: Image.asset('images/juice.png', width: 50, height: 50),
-                  title: Text("Black Bottle"),
-                  onTap: () {
-                    Navigator.of(context).pop('images/juice.png');
-                  },
-                ),
-                ListTile(
-                  leading: Image.asset('images/milk.png', width: 50, height: 50),
-                  title: Text("Milk Bottle"),
-                  onTap: () {
-                    Navigator.of(context).pop('images/milk.png');
-                  },
-                ),
-                ListTile(
-                  leading: Image.asset('images/black.png', width: 50, height: 50),
+                  leading: Image.asset('assets/Bo.jpg', width: 50, height: 50),
                   title: Text("Juice Bottle"),
                   onTap: () {
-                    Navigator.of(context).pop('images/black.png');
+                    Navigator.of(context).pop('assets/Bo.jpg');
                   },
                 ),
               ],
@@ -237,37 +243,290 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.deepPurple,
-          elevation: 10,
-          shadowColor: Colors.deepPurpleAccent,
-          title: Text(
-            "Spin the Bottle Game",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-          ),
-          centerTitle: true,
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepPurple.shade400, Colors.blue.shade400],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+  void changePlayerColor() async {
+    Color? selectedColor = await showDialog<Color>(
+      context: context,
+      builder: (BuildContext context) {
+        Color color = Colors.redAccent; // Default color
+        return AlertDialog(
+          title: Text("Select Player Color"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: playerColors.map((color) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(color);
+                  },
+                  child: Container(
+                    height: 50,
+                    color: color,
+                    child: Center(
+                      child: Text(
+                        "Select",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: showNameInput
-                    ? buildPlayerNamePage()
-                    : buildSpinBottlePage(),
+        );
+      },
+    );
+
+    if (selectedColor != null) {
+      setState(() {
+        for (int i = 0; i < playerColors.length; i++) {
+          if (i < playerNames.length) {
+            playerColors[i] = selectedColor;
+          }
+        }
+      });
+    }
+  }
+
+  void showSettings() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Settings"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                ListTile(
+                  title: Text("Edit Player Names"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Edit Player Names"),
+                          content: Container(
+                            width: double.maxFinite,
+                            child: buildPlayerNames(), // Display the player names for editing
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the edit dialog
+                              },
+                              child: Text("Done"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Change Colors"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    changePlayerColor(); // Call the function to change colors
+                  },
+                ),
+                ListTile(
+                  title: Text("Choose Bottle"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    selectBottle(); // Call the function to select a bottle
+                  },
+                ),
+                ListTile(
+                  title: Text("Edit Tasks"),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the settings dialog
+                    editTasks(); // Call the function to edit tasks
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void editTasks() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Edit Tasks"),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: challenges.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Task ${index + 1}",
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      challenges[index] = value; // Update the task
+                    },
+                    controller: TextEditingController(text: challenges[index]),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        challenges.removeAt(index); // Remove the task
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Close"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  challenges.add("New Task"); // Add a new task placeholder
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                editTasks(); // Open the dialog again to add new tasks
+              },
+              child: Text("Add Task"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget fadeIn({required Widget child}) {
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: Duration(seconds: 1),
+      builder: (context, double opacity, _) {
+        return Opacity(
+          opacity: opacity,
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget buildSpinBottlePage() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Spin & Share",
+          style: TextStyle(
+            fontSize: 26, // Increase font size for more impact
+            fontWeight: FontWeight.bold, // Make the text bold
+            color: Colors.yellowAccent, // Change text color
+            letterSpacing: 2, // Increase letter spacing
+            shadows: [
+              Shadow(
+                blurRadius: 3.0,
+                color: Colors.black.withOpacity(0.6),
+                offset: Offset(2.0, 2.0),
               ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        elevation: 5,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings, color: Colors.white),
+            onPressed: showSettings,
+          ),
+        ],
+      ),
+
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.purpleAccent,
+              Colors.blueAccent,
+              Colors.greenAccent,
+              Colors.orangeAccent,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showNameInput
+                  ? Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: buildPlayerNames(),
+                ),
+              )
+                  : Expanded(
+                child: fadeIn(
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform.rotate(
+                          angle: _currentRotation,
+                          child: Image.asset(
+                            selectedBottleImage,
+                            width: 150,
+                            height: 150,
+                          ),
+                        ),
+                        buildWheel(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (!spinning && !showNameInput)
+                Column(
+                  children: [
+                    Text(
+                      selectedPlayer.isEmpty
+                          ? "Tap Spin to start!"
+                          : "$selectedPlayer's turn\nChallenge: $selectedChallenge",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ElevatedButton(
+                onPressed: showNameInput
+                    ? () {
+                  setState(() {
+                    showNameInput = false;
+                  });
+                }
+                    : !spinning
+                    ? spinBottle
+                    : null,
+                child: Text(
+                  showNameInput ? "Start Game" : "Spin",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -275,139 +534,9 @@ class _SpinBottleHomeState extends State<SpinBottleHome>
     );
   }
 
-  Widget buildPlayerNamePage() {
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: buildPlayerNames(),
-              ),
-            ),
-          ),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            backgroundColor: Colors.deepPurple,
-            elevation: 10,
-            shadowColor: Colors.deepPurpleAccent,
-            textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () {
-            setState(() {
-              showNameInput = false;
-            });
-          },
-          child: Text(
-            "Start the Game",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget buildSpinBottlePage() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center, // Align to center vertically
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: selectBottle,
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              backgroundColor: Colors.deepPurpleAccent,
-            ),
-            child: Text(
-              "Select Bottle",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Transform.rotate(
-                  angle: _currentRotation,
-                  child: Image.asset(
-                    selectedBottleImage,
-                    width: 150,
-                    height: 150,
-                  ),
-                ),
-                buildWheel(), // Displays the players around the spinning bottle
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-        if (selectedPlayer.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              "Selected Player: $selectedPlayer",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        if (selectedChallenge.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              "Challenge: $selectedChallenge",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            backgroundColor: Colors.deepPurple,
-            elevation: 10,
-            shadowColor: Colors.deepPurpleAccent,
-            textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          onPressed: spinning ? null : spinBottle,
-          child: Text(
-            spinning ? "Spinning..." : "Spin the Bottle",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-      ],
-    );
-  }}
+  @override
+  Widget build(BuildContext context) {
+    return buildSpinBottlePage();
+  }
+}
