@@ -1,4 +1,4 @@
-name: dice_rolling
+name: Ludo
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -36,17 +36,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_colorpicker: ^1.1.0
-
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -60,14 +51,14 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-     - images/dice-1.png
-     - images/dice-2.png
-     - images/dice-3.png
-     - images/dice-4.png
-     - images/dice-5.png
-     - images/dice-6.png
 
+  assets:
+    - assets/images/dice-1.png
+    - assets/images/dice-2.png
+    - assets/images/dice-3.png
+    - assets/images/dice-4.png
+    - assets/images/dice-5.png
+    - assets/images/dice-6.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
