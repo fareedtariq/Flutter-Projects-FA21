@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "dice_rolling" "\0"
+            VALUE "FileDescription", "ludo_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "dice_rolling" "\0"
+            VALUE "InternalName", "ludo_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "dice_rolling.exe" "\0"
-            VALUE "ProductName", "dice_rolling" "\0"
+            VALUE "OriginalFilename", "ludo_app.exe" "\0"
+            VALUE "ProductName", "ludo_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

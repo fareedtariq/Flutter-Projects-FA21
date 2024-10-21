@@ -38,52 +38,55 @@ class PlayerNameScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.lightBlueAccent, Colors.yellowAccent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: SingleChildScrollView( // Wrap Column with SingleChildScrollView
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.lightBlueAccent, Colors.yellowAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome to the Dice Rolling Game!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            for (int i = 0; i < 4; i++)
-              TextField(
-                controller: controllers[i],
-                decoration: InputDecoration(
-                  labelText: 'Player ${i + 1} Name',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome to the Dice Rolling Game!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
+                textAlign: TextAlign.center,
               ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                List<String> playerNames =
-                controllers.map((controller) => controller.text).toList();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DiceGameScreen(playerNames: playerNames)),
-                );
-              },
-              child: Text('Start Game'),
-            ),
-          ],
+              SizedBox(height: 20),
+              for (int i = 0; i < 4; i++)
+                TextField(
+                  controller: controllers[i],
+                  decoration: InputDecoration(
+                    labelText: 'Player ${i + 1} Name',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  List<String> playerNames =
+                  controllers.map((controller) => controller.text).toList();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DiceGameScreen(playerNames: playerNames)),
+                  );
+                },
+                child: Text('Start Game'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -100,7 +103,6 @@ class DiceGameScreen extends StatefulWidget {
 }
 
 class _DiceGameScreenState extends State<DiceGameScreen> {
-  // Game State Variables
   int currentPlayer = 0;
   int rounds = 0;
   final int maxRounds = 4;
@@ -110,7 +112,6 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
   bool gameOver = false;
   int diceRoll = 1;
 
-  // Dice images path
   List<String> diceImages = [
     'images/dice-1.png',
     'images/dice-2.png',
@@ -120,7 +121,6 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
     'images/dice-6.png',
   ];
 
-  // Player colors
   List<Color> playerColors = [
     Colors.red,
     Colors.blue,
@@ -128,7 +128,6 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
     Colors.yellow,
   ];
 
-  // Custom colors
   final Color diceButtonColor = Colors.deepPurple;
   final Color restartButtonColor = Colors.orange;
 
@@ -153,10 +152,13 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
           gameOver = true;
           List<int> winners = findWinners();
           if (winners.length == 1) {
-            message = "Game Over! ${widget.playerNames[winners[0]]} wins with ${scores[winners[0]]} points!";
+            message =
+            "Game Over! ${widget.playerNames[winners[0]]} wins with ${scores[winners[0]]} points!";
           } else {
-            String tiedPlayers = winners.map((i) => widget.playerNames[i]).join(' and ');
-            message = "Game Tied! $tiedPlayers with ${scores[winners[0]]} points!";
+            String tiedPlayers =
+            winners.map((i) => widget.playerNames[i]).join(' and ');
+            message =
+            "Game Tied! $tiedPlayers with ${scores[winners[0]]} points!";
           }
         }
       });
@@ -201,9 +203,9 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        diceRoll = index + 1; // Set the selected dice image
+                        diceRoll = index + 1;
                       });
-                      Navigator.pop(context); // Close the settings
+                      Navigator.pop(context);
                     },
                     child: Image.asset(
                       diceImages[index],
@@ -232,7 +234,8 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text('Select Color for Player ${index + 1}'),
+                              title:
+                              Text('Select Color for Player ${index + 1}'),
                               content: SingleChildScrollView(
                                 child: BlockPicker(
                                   pickerColor: playerColors[index],
@@ -267,134 +270,148 @@ class _DiceGameScreenState extends State<DiceGameScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
-            onPressed: openSettings, // Open settings sidebar
+            onPressed: openSettings,
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          // Background Color or Image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/ludo_background.png'),
-                fit: BoxFit.cover,
+      body: SingleChildScrollView( // Wrap the entire body in a scrollable view
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.lightBlueAccent, Colors.yellowAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
+              height: MediaQuery.of(context).size.height,
             ),
-          ),
-          // Player Boxes
-          Positioned(
-            top: 40,
-            left: 20,
-            child: playerInfoBox(0, widget.playerNames[0], scores[0], turnsTaken[0], playerColors[0]),
-          ),
-          Positioned(
-            top: 40,
-            right: 20,
-            child: playerInfoBox(1, widget.playerNames[1], scores[1], turnsTaken[1], playerColors[1]),
-          ),
-          Positioned(
-            bottom: 40,
-            left: 20,
-            child: playerInfoBox(2, widget.playerNames[2], scores[2], turnsTaken[2], playerColors[2]),
-          ),
-          Positioned(
-            bottom: 40,
-            right: 20,
-            child: playerInfoBox(3, widget.playerNames[3], scores[3], turnsTaken[3], playerColors[3]),
-          ),
-          // Dice Button (Center)
-          if (!gameOver) Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.purple),
-                ),
-                SizedBox(height: 20),
-                Image.asset(
-                  diceImages[diceRoll - 1],
-                  width: 100,
-                  height: 100,
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: rollDice,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: diceButtonColor,
-                  ),
-                  child: Text('Roll Dice'),
-                ),
-              ],
-            ),
-          ),
-          // Show the game over screen and the winner when the game ends
-          if (gameOver)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    message,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-          // Restart Button at the bottom
-          if (gameOver)
             Positioned(
-              bottom: 20,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      currentPlayer = 0;
-                      rounds = 0;
-                      scores.fillRange(0, 4, 0);
-                      turnsTaken.fillRange(0, 4, 0);
-                      message = "${widget.playerNames[0]}'s Turn";
-                      gameOver = false;
-                      diceRoll = 1;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: restartButtonColor,
-                  ),
-                  child: Text('Restart Game'),
+              top: 40,
+              left: 20,
+              child: playerInfoBox(0, widget.playerNames[0], scores[0],
+                  turnsTaken[0], playerColors[0]),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: playerInfoBox(1, widget.playerNames[1], scores[1],
+                  turnsTaken[1], playerColors[1]),
+            ),
+            Positioned(
+              bottom: 40,
+              left: 20,
+              child: playerInfoBox(2, widget.playerNames[2], scores[2],
+                  turnsTaken[2], playerColors[2]),
+            ),
+            Positioned(
+              bottom: 40,
+              right: 20,
+              child: playerInfoBox(3, widget.playerNames[3], scores[3],
+                  turnsTaken[3], playerColors[3]),
+            ),
+            if (!gameOver)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Image.asset(
+                      diceImages[diceRoll - 1],
+                      width: 100,
+                      height: 100,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: rollDice,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: diceButtonColor,
+                      ),
+                      child: Text('Roll Dice'),
+                    ),
+                  ],
                 ),
               ),
-            ),
-        ],
+            if (gameOver)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: restartButtonColor,
+                      ),
+                      child: Text('Restart Game'),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 
-  // Player Info Box
-  Widget playerInfoBox(int playerIndex, String playerName, int score, int turns, Color color) {
+  Widget playerInfoBox(int playerIndex, String playerName, int score,
+      int turns, Color color) {
     return Container(
       padding: EdgeInsets.all(10),
+      width: 150,
+      height: 100,
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
+        color: color.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white,
+          width: 2,
+        ),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             playerName,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
           Text(
             'Score: $score',
-            style: TextStyle(fontSize: 18, color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
           Text(
             'Turns: $turns',
-            style: TextStyle(fontSize: 18, color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
