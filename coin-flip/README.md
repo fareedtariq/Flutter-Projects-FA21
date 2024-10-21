@@ -1,4 +1,4 @@
-<h1>Coin Flip Game</h1>
+<h1>Coin Flip Game  </h1>
 
 <p>Welcome to the Coin Flip Game! This Flutter app allows you to flip a coin among four players, keeping track of each player's flips and announcing a winner at the end. The app features animations, user-friendly design, and colorful backgrounds.</p>
 
