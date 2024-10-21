@@ -14,6 +14,9 @@
 
 <h3>Screenshot 1</h3>
 
+![ludo1](https://github.com/user-attachments/assets/fa76ec06-5637-4c52-8307-ba10c0ad1c38)
 
 
 <h3>Screenshot 2</h3>
+
+![ludo2](https://github.com/user-attachments/assets/ebdde19a-eedd-48ee-89d6-62cc931cfe7f)
