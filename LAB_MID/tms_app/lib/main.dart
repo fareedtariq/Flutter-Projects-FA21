@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'package:intl/intl.dart';
-void main() {
-  runApp(const MyApp());
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:todo_app_new_edition/db/db_helper.dart';
+import 'package:todo_app_new_edition/onboding/onboding_screen.dart';
+import 'package:todo_app_new_edition/services/theme_services.dart';
+import 'package:todo_app_new_edition/ui/screens/home_page.dart';
+import 'package:todo_app_new_edition/ui/screens/side_bar_entry/calendar.dart';
+import 'package:todo_app_new_edition/utils/theme.dart';
+
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDb(); // initialize the database
+  await GetStorage.init();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter SQLite CRUD',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(),
+    return GetMaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false, // close the debug banner
+      theme: Themes.light,
+      darkTheme: Themes.dark,
+      themeMode: ThemeServices().theme,
+
+      home: Calendar(),
+      // home: HomePage(),
+      // TODO -- When need to add the login function, uncomment this
+      // home: OnbodingScreen(), // login page
     );
   }
 }
+
