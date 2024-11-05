@@ -1,7 +1,7 @@
 import 'package:mysql1/mysql1.dart';
-import 'package:mysql_utils/mysql_utils.dart';
-import 'package:todo_app_new_edition/models/mysql.dart';
-import 'package:todo_app_new_edition/models/task.dart';
+import 'package:tms_app/models/mysql.dart';
+import 'package:tms_app/models/task.dart';
+import 'package:tms_app/mysql_utils/mysql_utils.dart';
 
 /* link to database using MySQL
 * not used so far

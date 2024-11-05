@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:todo_app_new_edition/db/db_helper.dart';
-import 'package:todo_app_new_edition/onboding/onboding_screen.dart';
-import 'package:todo_app_new_edition/services/theme_services.dart';
-import 'package:todo_app_new_edition/ui/screens/home_page.dart';
-import 'package:todo_app_new_edition/ui/screens/side_bar_entry/calendar.dart';
-import 'package:todo_app_new_edition/utils/theme.dart';
+import 'package:tms_app/db/db_helper.dart';
+import 'package:tms_app/onboding/onboding_screen.dart';
+import 'package:tms_app/services/theme_services.dart';
+import 'package:tms_app/ui/screens/home_page.dart';
+import 'package:tms_app/ui/screens/side_bar_entry/calendar.dart';
+import 'package:tms_app/utils/theme.dart';
 
 
 Future<void> main() async {
