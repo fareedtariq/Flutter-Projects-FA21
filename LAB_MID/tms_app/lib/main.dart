@@ -6,8 +6,10 @@ import 'tasks/add_task.dart';
 import 'screens/theme_manager.dart';
 import 'services/database_helper.dart';
 import 'Utilities/notification_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
+  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initNotifications();
   runApp(TaskManagementApp());

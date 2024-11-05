@@ -33,4 +33,29 @@ class NotificationService {
       platformChannelSpecifics,
     );
   }
+
+  Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledDate) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'task_channel',        // ID of the notification channel
+      'Task Notifications',   // Name of the channel
+      channelDescription: 'Channel for task reminders', // Provide channel description
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      // Convert DateTime to local time zone
+      tz.TZDateTime.from(scheduledDate, tz.local),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
 }

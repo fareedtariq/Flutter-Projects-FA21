@@ -2,34 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:tms_app/models/task_model.dart';
 import 'package:tms_app/services/database_helper.dart';
 
-class EditTaskScreen extends StatefulWidget {
-  final Task task;
+class EditTask extends StatefulWidget {
+  final String initialTitle;
+  final String initialDescription;
+  final DateTime? initialDueDate;
+  final bool initialIsRepeating;
 
-  EditTaskScreen({required this.task});
+  EditTask({
+    required this.initialTitle,
+    required this.initialDescription,
+    required this.initialDueDate,
+    required this.initialIsRepeating,
+  });
 
   @override
-  _EditTaskScreenState createState() => _EditTaskScreenState();
+  _EditTaskState createState() => _EditTaskState();
 }
 
-class _EditTaskScreenState extends State<EditTaskScreen> {
-  final _formKey = GlobalKey<FormState>();
+class _EditTaskState extends State<EditTask> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  DateTime? _dueDate; // Nullable due date
+  DateTime? _dueDate;
+  late bool _isRepeating;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.task.title);
-    _descriptionController = TextEditingController(text: widget.task.description);
-    _dueDate = widget.task.dueDate; // Using existing due date
+    _titleController = TextEditingController(text: widget.initialTitle);
+    _descriptionController = TextEditingController(text: widget.initialDescription);
+    _dueDate = widget.initialDueDate;
+    _isRepeating = widget.initialIsRepeating;
   }
 
-  void _selectDueDate(BuildContext context) async {
+  void _updateTask() {
+    // Update your task with the new values
+    // Example: updateTask(taskId, title, description, dueDate, isRepeating)
+
+    Navigator.of(context).pop(); // Close the Edit Task screen
+  }
+
+  Future<void> _selectDueDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _dueDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != _dueDate) {
@@ -39,68 +55,45 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     }
   }
 
-  Future<void> _saveTask() async {
-    if (_formKey.currentState!.validate()) {
-      Task updatedTask = Task(
-        id: widget.task.id,
-        title: _titleController.text,
-        description: _descriptionController.text,
-        dueDate: _dueDate ?? DateTime.now(),
-        isCompleted: widget.task.isCompleted,
-        isRepeated: widget.task.isRepeated,
-        // repeatInterval: widget.task.repeatInterval, // Remove or modify this line based on your design
-      );
-      await DatabaseHelper().updateTask(updatedTask);
-      Navigator.pop(context, true);
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Edit Task')),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  return value == null || value.isEmpty ? 'Please enter a title' : null;
-                },
-              ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  return value == null || value.isEmpty ? 'Please enter a description' : null;
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "Due Date: ${_dueDate != null ? _dueDate!.toLocal().toString().split(' ')[0] : 'Not set'}",
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDueDate(context),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveTask,
-                child: Text('Save Changes'),
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: _descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+            ),
+            Row(
+              children: [
+                Text('Due Date: ${_dueDate?.toLocal().toString().split(' ')[0] ?? 'Not Set'}'),
+                IconButton(
+                  icon: Icon(Icons.calendar_today),
+                  onPressed: () => _selectDueDate(context),
+                ),
+              ],
+            ),
+            SwitchListTile(
+              title: Text('Repeat Task'),
+              value: _isRepeating,
+              onChanged: (bool value) {
+                setState(() {
+                  _isRepeating = value;
+                });
+              },
+            ),
+            ElevatedButton(
+              child: Text('Update Task'),
+              onPressed: _updateTask,
+            ),
+          ],
         ),
       ),
     );

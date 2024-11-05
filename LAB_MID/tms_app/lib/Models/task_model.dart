@@ -85,7 +85,14 @@ class Task {
     ];
   }
 }
+void deleteTask(String taskId) {
+  // Implement logic to remove task from your data source
+}
 
+// Function to mark a task as completed
+void markTaskAsCompleted(String taskId) {
+  // Implement logic to update the task status to completed
+}
 // Subtask class for tracking individual subtask progress
 class Subtask {
   String title;
