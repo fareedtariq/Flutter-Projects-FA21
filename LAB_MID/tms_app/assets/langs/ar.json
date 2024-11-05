@@ -1,0 +1,18 @@
+{
+    "appTitle": "مهام",
+    "buttonTitle": "English",
+    "notTasks": "قم بإضافة بعض المهام",
+    "not-Field": "الحقل لا يمكن ان يكون فارغ",
+    "title-new": "العنوان",
+    "title-hint": "أدخل العنوان",
+    "description-new": "الوصف",
+    "Time-new": "الوقت",
+    "Date-new": "التاريخ",
+    "Image-new": "صورة",
+    "textArea": "هذا مجرد نموذج للتأكد من اداء الأداة",
+    "chooseImage":"أختار صورة",
+    "addImage": "أضافة صورة",
+    "ImageGallery": "معرض",
+    "ImageCamera": "كاميرا",
+    "canselAdd":"الغاء"
+}

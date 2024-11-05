@@ -1,0 +1,18 @@
+{
+    "appTitle": "TODO", 
+    "buttonTitle": "العربية ", 
+    "notTasks":"Add some tasks",
+    "not-Field":"The field cannot be empty",
+    "title-new":"Address",
+    "title-hint":"أدخل العنوان",
+    "description-new":"Description",
+    "Time-new":"Time",
+    "Date-new":"Date",
+    "Image-new":"Image",
+    "textArea": " This is example for lange",
+    "chooseImage":"Choose a picture",
+    "addImage":"Add Image",
+    "ImageGallery": "Gallery",
+    "ImageCamera": "Camera",
+    "canselAdd":"Cancel"
+}
