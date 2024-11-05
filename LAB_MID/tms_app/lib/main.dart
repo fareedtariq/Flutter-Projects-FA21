@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tms_app/constant/constant_screen.dart';
 import 'package:tms_app/layout/home_layout.dart';
+import 'package:tms_app/cubit/app_cubit.dart'; // Import AppCubit
+import 'package:tms_app/cubit/app_states.dart'; // Import AppStates if needed
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'constant/bloc_observer.dart';
 
@@ -13,6 +15,7 @@ void main() async {
     languagesList: <String>['ar', 'en'],
     assetsDirectory: 'assets/langs/',
   );
+
   BlocOverrides.runZoned(
         () {
       runApp(LocalizedApp(
@@ -28,13 +31,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeData(),
-      home: HomeLayout(),
-      localizationsDelegates: translator.delegates, // Android + iOS Delegates
-      locale: translator.locale, // Active locale
-      supportedLocales: translator.locals(), // Locals list
+    return BlocProvider(
+      create: (context) => AppCubit()..createDataBase(), // Initialize AppCubit and create the database
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: themeData(),
+        home: HomeLayout(),
+        localizationsDelegates: translator.delegates, // Android + iOS Delegates
+        locale: translator.locale, // Active locale
+        supportedLocales: translator.locals(), // Locals list
+      ),
     );
   }
 }
