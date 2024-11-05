@@ -1,51 +1,28 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tms_app/constant/constant_screen.dart';
-import 'package:tms_app/layout/home_layout.dart';
-import 'package:tms_app/cubit/app_cubit.dart'; // Import AppCubit
-import 'package:tms_app/cubit/app_states.dart'; // Import AppStates if needed
-import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Import for FFI support
-import 'constant/bloc_observer.dart';
+import 'package:tms_app/models/task_model.dart'; // Import your models
+import 'package:tms_app/services/database_helper.dart'; // Import your database services
+import 'package:tms_app/tasks/edit_task.dart'; // Import your screens
+import 'package:tms_app/screens/home_screen.dart'; // Home screen or main screen of the app
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize the database factory for FFI
-  databaseFactory = databaseFactoryFfi;
-
-  await translator.init(
-    localeType: LocalizationDefaultType.device,
-    languagesList: <String>['ar', 'en'],
-    assetsDirectory: 'assets/langs/',
-  );
-
-  BlocOverrides.runZoned(
-        () {
-      runApp(LocalizedApp(
-        child: const MyApp(),
-      ));
-    },
-    blocObserver: MyBlocObserver(),
-  );
+void main() {
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppCubit()..createDataBase(), // Initialize AppCubit and create the database
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: themeData(),
-        home: HomeLayout(),
-        localizationsDelegates: translator.delegates, // Android + iOS Delegates
-        locale: translator.locale, // Active locale
-        supportedLocales: translator.locals(), // Locals list
+    return MaterialApp(
+      title: 'Task Management System',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: HomeScreen(), // Set the initial screen
+      routes: {
+        '/editTask': (context) => EditTaskScreen(task: ModalRoute.of(context)!.settings.arguments as Task), // Route for editing a task
+        // Add other routes here
+      },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
