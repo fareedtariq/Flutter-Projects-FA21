@@ -48,12 +48,6 @@ class AppCubit extends Cubit<AppStates> {
 
   // Change in the bottom navigation bar
   void changeBottomNavBar(int index) {
-    currentPage = index;
-    emit(AppBottomNavBarChangeState()); // Emit the state after changing
-  }
-
-  // New method: Change the bottom navigation bar
-  void changeBottomNavigationBar(int index) {
     currentPage = index; // Update the current page index
     emit(AppBottomNavBarChangeState()); // Emit the change state
   }

@@ -6,10 +6,15 @@ import 'package:tms_app/layout/home_layout.dart';
 import 'package:tms_app/cubit/app_cubit.dart'; // Import AppCubit
 import 'package:tms_app/cubit/app_states.dart'; // Import AppStates if needed
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Import for FFI support
 import 'constant/bloc_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize the database factory for FFI
+  databaseFactory = databaseFactoryFfi;
+
   await translator.init(
     localeType: LocalizationDefaultType.device,
     languagesList: <String>['ar', 'en'],

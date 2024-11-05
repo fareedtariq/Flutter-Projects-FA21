@@ -41,7 +41,7 @@ class HomeLayout extends StatelessWidget {
                     translator.setNewLanguage(
                       context,
                       newLanguage: translator.currentLanguage == 'en' ? 'ar' : 'en',
-                    ); // Removed restart: true
+                    );
                   },
                   itemBuilder: (BuildContext context) {
                     return [
@@ -307,12 +307,12 @@ class HomeLayout extends StatelessWidget {
                       .closed
                       .then((value) {
                     cubit.changeBottomSheetState(
-                      isShowed: false, // Corrected parameter name
+                      isShowed: false,
                       icon: Icons.edit,
                     );
                   });
                   cubit.changeBottomSheetState(
-                    isShowed: true, // Corrected parameter name
+                    isShowed: true,
                     icon: Icons.add,
                   );
                 }
@@ -329,28 +329,22 @@ class HomeLayout extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: cubit.currentPage,
-              elevation: 0.0,
               onTap: (index) {
-                cubit.changeBottomNavigationBar(index);
+                cubit.changeBottomNavBar(index);
               },
+              currentIndex: cubit.currentPage,
               items: const [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: "Home",
+                  icon: Icon(Icons.list),
+                  label: 'Tasks',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.list),
-                  label: "Tasks",
+                  icon: Icon(Icons.check_circle),
+                  label: 'Done',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.archive),
-                  label: "Archive",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.done),
-                  label: "Done",
+                  label: 'Archived',
                 ),
               ],
             ),
