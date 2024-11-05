@@ -1,24 +1,27 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
-import 'package:tms_app/models/task_model.dart';
+import 'package:tms_app/Models/task_model.dart';
 
 class ExportService {
   Future<void> exportToCSV(List<Task> tasks) async {
     List<List<String>> rows = [
-      ['ID', 'Title', 'Description', 'Due Date', 'Completed']
+      ['Title', 'Description', 'Due Date', 'Completed']
     ];
 
     for (var task in tasks) {
       rows.add([
-        task.id?.toString() ?? '',                // Convert nullable int to String or empty string if null
-        task.title ?? 'Untitled Task',            // Provide default text if title is null
-        task.description ?? 'No Description',     // Provide default text if description is null
-        task.dueDate.toIso8601String(),           // DateTime is usually not nullable; adjust if necessary
-        task.isCompleted ? 'Yes' : 'No'           // Boolean check for completed status
+        task.title,
+        task.description,
+        task.dueDate,
+        task.isCompleted ? 'Yes' : 'No',
       ]);
     }
 
-    String csv = const ListToCsvConverter().convert(rows);
-
-    // Add logic to save or share the generated CSV file, e.g., write to a file or share using share package
+    String csvData = const ListToCsvConverter().convert(rows);
+    final directory = await getApplicationDocumentsDirectory();
+    final path = "${directory.path}/tasks.csv";
+    final file = File(path);
+    await file.writeAsString(csvData);
   }
 }
