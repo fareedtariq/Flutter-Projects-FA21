@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'today_tasks.dart';
 import 'completed_task.dart';
 import 'repeated_tasks.dart';
-import 'package:tms_app/tasks//add_task.dart';
-import 'package:tms_app/tasks//edit_task.dart';
+import 'package:tms_app/tasks/add_task.dart';
+import 'package:tms_app/tasks/edit_task.dart';
 import 'package:tms_app/services/database_helper.dart';
 import 'package:tms_app/Models/task_model.dart';
 
