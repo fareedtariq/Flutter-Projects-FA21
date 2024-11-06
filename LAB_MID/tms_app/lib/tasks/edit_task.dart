@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tms_app/models/task_model.dart';
+import 'package:tms_app/Models/task_model.dart';
 import 'package:tms_app/services/database_helper.dart';
 
 class EditTask extends StatefulWidget {
+  final int taskId;
   final String initialTitle;
   final String initialDescription;
   final DateTime? initialDueDate;
   final bool initialIsRepeating;
 
   EditTask({
+    required this.taskId,
     required this.initialTitle,
     required this.initialDescription,
     required this.initialDueDate,
@@ -20,6 +22,7 @@ class EditTask extends StatefulWidget {
 }
 
 class _EditTaskState extends State<EditTask> {
+  final dbHelper = DatabaseHelper.instance;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   DateTime? _dueDate;
@@ -34,12 +37,19 @@ class _EditTaskState extends State<EditTask> {
     _isRepeating = widget.initialIsRepeating;
   }
 
-  void _updateTask() {
-    // Update your task with the new values
-    // Example: updateTask(taskId, title, description, dueDate, isRepeating)
+  Future<void> _updateTask() async {
+    final updatedTask = Task(
+      id: widget.taskId,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      dueDate: _dueDate,  // Keep as DateTime?
+      repeat: _isRepeating ? 'daily' : 'none', // Assuming repeat is set to 'daily' or 'none'
+    );
 
+    await dbHelper.updateTask(updatedTask); // Update task in the database
     Navigator.of(context).pop(); // Close the Edit Task screen
   }
+
 
   Future<void> _selectDueDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _addTask() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TaskAddScreen()),
+      MaterialPageRoute(builder: (context) => AddTask()),
     );
     _fetchTasks(); // Refresh task list after adding
   }
