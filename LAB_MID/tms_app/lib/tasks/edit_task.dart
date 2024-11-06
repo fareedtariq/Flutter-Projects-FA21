@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:tms_app/Models/task_model.dart';
-import 'package:tms_app/services/database_helper.dart';
+import 'package:tms_app/Models/task_model.dart'; // Ensure Task model is imported
+import 'package:tms_app/database_helper.dart'; // Ensure DatabaseHelper is imported
 
-class EditTask extends StatefulWidget {
+class EditTaskScreen extends StatefulWidget {
   final int taskId;
   final String initialTitle;
   final String initialDescription;
   final DateTime? initialDueDate;
   final bool initialIsRepeating;
 
-  EditTask({
+  EditTaskScreen({
     required this.taskId,
     required this.initialTitle,
     required this.initialDescription,
-    required this.initialDueDate,
-    required this.initialIsRepeating,
+    this.initialDueDate,
+    this.initialIsRepeating = false,
   });
 
   @override
-  _EditTaskState createState() => _EditTaskState();
+  _EditTaskScreenState createState() => _EditTaskScreenState();
 }
 
-class _EditTaskState extends State<EditTask> {
+class _EditTaskScreenState extends State<EditTaskScreen> {
   final dbHelper = DatabaseHelper.instance;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
@@ -42,14 +42,15 @@ class _EditTaskState extends State<EditTask> {
       id: widget.taskId,
       title: _titleController.text,
       description: _descriptionController.text,
-      dueDate: _dueDate,  // Keep as DateTime?
-      repeat: _isRepeating ? 'daily' : 'none', // Assuming repeat is set to 'daily' or 'none'
+      dueDate: _dueDate?.toIso8601String() ?? '', // Convert DateTime to String
+      repeatInterval: _isRepeating ? 'daily' : 'none', // Set repeat interval
+      isCompleted: 0, // Assuming task is not completed by default
+      progress: 0.0, // Initial progress set to 0
     );
 
     await dbHelper.updateTask(updatedTask); // Update task in the database
     Navigator.of(context).pop(); // Close the Edit Task screen
   }
-
 
   Future<void> _selectDueDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

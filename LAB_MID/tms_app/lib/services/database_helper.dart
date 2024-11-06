@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:tms_app/Models/task_model.dart';
-import 'package:tms_app/Models/subtask_model.dart';
+import 'package:tms_app/Models/task_model.dart' as taskModel;  // Alias to avoid conflicts
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -48,30 +47,30 @@ class DatabaseHelper {
 
   // Task Operations
 
-  Future<int> insertTask(Task task) async {
+  Future<int> insertTask(taskModel.Task task) async {
     final db = await instance.database;
     return await db.insert('tasks', task.toMap());
   }
 
-  Future<List<Task>> fetchTasks() async {
+  Future<List<taskModel.Task>> fetchTasks() async {
     final db = await instance.database;
     final result = await db.query('tasks', orderBy: 'dueDate');
-    return result.map((json) => Task.fromMap(json)).toList();
+    return result.map((json) => taskModel.Task.fromMap(json)).toList();
   }
 
-  Future<List<Task>> fetchTodayTasks(String todayDate) async {
+  Future<List<taskModel.Task>> fetchTodayTasks(String todayDate) async {
     final db = await instance.database;
     final result = await db.query('tasks', where: 'dueDate = ?', whereArgs: [todayDate]);
-    return result.map((json) => Task.fromMap(json)).toList();
+    return result.map((json) => taskModel.Task.fromMap(json)).toList();
   }
 
-  Future<List<Task>> fetchCompletedTasks() async {
+  Future<List<taskModel.Task>> fetchCompletedTasks() async {
     final db = await instance.database;
     final result = await db.query('tasks', where: 'isCompleted = ?', whereArgs: [1]);
-    return result.map((json) => Task.fromMap(json)).toList();
+    return result.map((json) => taskModel.Task.fromMap(json)).toList();
   }
 
-  Future<int> updateTask(Task task) async {
+  Future<int> updateTask(taskModel.Task task) async {
     final db = await instance.database;
     return await db.update('tasks', task.toMap(), where: 'id = ?', whereArgs: [task.id]);
   }
@@ -87,23 +86,23 @@ class DatabaseHelper {
   }
 
   // Repeat Tasks
-  Future<List<Task>> fetchRepeatedTasks(String interval) async {
+  Future<List<taskModel.Task>> fetchRepeatedTasks(String interval) async {
     final db = await instance.database;
     final result = await db.query('tasks', where: 'repeatInterval = ?', whereArgs: [interval]);
-    return result.map((json) => Task.fromMap(json)).toList();
+    return result.map((json) => taskModel.Task.fromMap(json)).toList();
   }
 
   // Subtasks and Progress Tracking
 
-  Future<int> insertSubtask(Subtask subtask) async {
+  Future<int> insertSubtask(taskModel.Subtask subtask) async {
     final db = await instance.database;
     return await db.insert('subtasks', subtask.toMap());
   }
 
-  Future<List<Subtask>> fetchSubtasks(int taskId) async {
+  Future<List<taskModel.Subtask>> fetchSubtasks(int taskId) async {
     final db = await instance.database;
     final result = await db.query('subtasks', where: 'taskId = ?', whereArgs: [taskId]);
-    return result.map((json) => Subtask.fromMap(json)).toList();
+    return result.map((json) => taskModel.Subtask.fromMap(json)).toList();
   }
 
   Future<int> markSubtaskAsCompleted(int id) async {
