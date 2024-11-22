@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _isSearching = false;
                     });
                     if (value.isNotEmpty) {
-                      weatherProvider.setCity(value);
+                      weatherProvider.setCity(value); // Update city when submitted
                     }
                   },
                   decoration: InputDecoration(
@@ -96,16 +96,18 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              // Refresh the weather data when clicked
+              // Trigger fetchWeather when the refresh button is clicked
               weatherProvider.fetchWeather();
             },
           ),
         ],
       ),
-      body: weatherProvider.weatherData == null
+      body: weatherProvider.weatherData == null && !weatherProvider.isLoading
           ? const Center(
-        child: CircularProgressIndicator(),
+        child: Text("No weather data available. Please search for a city."),
       )
+          : weatherProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

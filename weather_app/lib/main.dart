@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'weather_provider.dart';
 import 'home_screen.dart';
+import 'splash_screen.dart'; // Import the SplashScreen
 
 void main() {
   runApp(
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Weather App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
+      home:  SplashScreen(), // Set SplashScreen as the home screen
     );
   }
 }
