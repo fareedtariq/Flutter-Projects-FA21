@@ -91,6 +91,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.blueAccent,
         elevation: 4,
+        actions: [
+          // Refresh Button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              // Refresh the weather data when clicked
+              weatherProvider.fetchWeather();
+            },
+          ),
+        ],
       ),
       body: weatherProvider.weatherData == null
           ? const Center(
