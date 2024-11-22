@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:animate_do/animate_do.dart';
 import 'weather_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -11,37 +20,76 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 100, // Increased height to accommodate search bar
+        toolbarHeight: 120, // Increased height for better design
         flexibleSpace: Container(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Search Bar
-              SizedBox(
-                height: 45,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search City...",
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
+              // Weather App Name with Animation
+              FadeInDown(
+                child: Text(
+                  "Weather App",
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Animated Search Bar
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 50,
+                width: _isSearching ? 300 : 250,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.blue, Colors.lightBlueAccent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onTap: () {
+                    setState(() {
+                      _isSearching = true;
+                    });
+                  },
                   onSubmitted: (value) {
+                    setState(() {
+                      _isSearching = false;
+                    });
                     if (value.isNotEmpty) {
                       weatherProvider.setCity(value);
                     }
                   },
+                  decoration: InputDecoration(
+                    hintText: "Search City...",
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white),
+                    suffixIcon: _isSearching
+                        ? IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          _isSearching = false;
+                          _searchController.clear();
+                        });
+                      },
+                    )
+                        : null,
+                  ),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ],
           ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blueAccent,
         elevation: 4,
       ),
       body: weatherProvider.weatherData == null
@@ -54,37 +102,48 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // City Name
-              Text(
-                weatherProvider.selectedCity,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+              // City Name with Fade-In Animation
+              FadeInDown(
+                child: Text(
+                  weatherProvider.selectedCity,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              // Weather Icon
-              Image.network(
-                'https://openweathermap.org/img/wn/${weatherProvider.weatherData!['weather'][0]['icon']}@2x.png',
-                height: 100,
+              // Weather Icon with Slide-In Animation
+              SlideInUp(
+                child: Image.network(
+                  'https://openweathermap.org/img/wn/${weatherProvider.weatherData!['weather'][0]['icon']}@2x.png',
+                  height: 100,
+                ),
               ),
               const SizedBox(height: 16),
-              // Temperature
-              Text(
-                "${weatherProvider.weatherData!['main']['temp']}°C",
-                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold),
+              // Temperature with Bounce-In Animation
+              FadeIn(
+                child: Text(
+                  "${weatherProvider.weatherData!['main']['temp']}°C",
+                  style: const TextStyle(
+                    fontSize: 64,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               // Weather Description
-              Text(
-                weatherProvider.weatherData!['weather'][0]['description']
-                    .toString()
-                    .toUpperCase(),
-                style: const TextStyle(fontSize: 24),
+              FadeInUp(
+                child: Text(
+                  weatherProvider.weatherData!['weather'][0]['description']
+                      .toString()
+                      .toUpperCase(),
+                  style: const TextStyle(fontSize: 24),
+                ),
               ),
               const SizedBox(height: 16),
-              // Additional Details
-              WeatherDetails(weatherProvider.weatherData!),
+              // Additional Details Section with Slide Animation
+              SlideInLeft(child: WeatherDetails(weatherProvider.weatherData!)),
             ],
           ),
         ),
