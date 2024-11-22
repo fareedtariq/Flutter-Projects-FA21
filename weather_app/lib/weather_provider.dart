@@ -22,19 +22,12 @@ class WeatherProvider with ChangeNotifier {
 
   // Method to fetch weather data
   Future<void> fetchWeather() async {
-    _isLoading = true;
-    _errorMessage = null;  // Reset error message when trying to fetch new data
-    notifyListeners();
-
     try {
       _weatherData = await _weatherService.fetchWeather(_selectedCity);
-      _isLoading = false;
+      print(_weatherData); // This will print the fetched weather data to the console
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      _errorMessage = "Error fetching weather data. Please try again.";
-      notifyListeners();
-      print("Error: $e");
+      print("Error fetching weather data: $e");
     }
   }
 
