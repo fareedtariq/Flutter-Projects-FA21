@@ -16,7 +16,7 @@
   <p>To run this app locally, follow these steps:</p>
   <ol>
     <li>Clone the repository:</li>
-    <pre><code>git clone https://github.com/yourusername/weather-app.git</code></pre>
+    <pre><code>git clone https://github.com/fareedtariq16/weather-app.git</code></pre>
     <li>Navigate to the project directory:</li>
     <pre><code>cd weather-app</code></pre>
     <li>Install the dependencies:</li>
