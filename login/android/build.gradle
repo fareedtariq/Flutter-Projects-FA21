@@ -1,0 +1,35 @@
+// Project-level build.gradle (android/build.gradle)
+
+allprojects {
+    repositories {
+        google()  // Ensure this repository is added
+        mavenCentral()  // Maven Central repository
+    }
+}
+
+rootProject.buildDir = "../build"  // Ensure the build output is in the right location
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"  // Custom build directory per project
+}
+
+subprojects {
+    project.evaluationDependsOn(":app")  // Ensuring app is evaluated
+}
+
+// Clean task to delete the build directory
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+buildscript {
+    repositories {
+        google()  // Google repository for Firebase and other dependencies
+        mavenCentral()  // Maven Central repository
+    }
+    dependencies {
+        // Firebase Google Services plugin for Firebase integration
+        classpath 'com.google.gms:google-services:4.3.15'  // Ensure this version is correct
+        classpath 'com.android.tools.build:gradle:7.2.0'  // Make sure the Android Gradle plugin is appropriate for your setup
+    }
+}
