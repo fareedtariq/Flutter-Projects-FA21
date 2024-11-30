@@ -70,7 +70,7 @@ class Home extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),    
               child: Container(
                 child: ButtonTheme(
                   minWidth: 200,
