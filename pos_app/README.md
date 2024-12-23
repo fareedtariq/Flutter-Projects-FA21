@@ -36,23 +36,23 @@
   <div class="screenshot-section">
     <div class="screenshot">
       <h3>Splash Screen</h3>
-      <img src="![splash_screen](https://github.com/user-attachments/assets/88c7b01e-e4c3-4fed-9aa7-201c54b0b556)" alt="Splash Screen">
+      <img src="assets/splash_screen.jpg" alt="Splash Screen" height="350" style="margin-right: 10px;>
     </div>
     <div class="screenshot">
       <h3>Login Screen</h3>
-      <img src="assets/screenshots/login_screen.jpg" alt="Login Screen">
+      <img src="assets/login_screen.jpg" alt="Login Screen" height="350" style="margin-right: 10px;>
     </div>
     <div class="screenshot">
-      <h3>Order Management</h3>
-      <img src="assets/screenshots/order_management.jpg" alt="Order Management">
+      <h3>Notification</h3>
+      <img src="assets/notification_screen.jpg" alt="Notification" height="350" style="margin-right: 10px;>
     </div>
     <div class="screenshot">
-      <h3>Inventory Management</h3>
-      <img src="assets/screenshots/inventory_management.jpg" alt="Inventory Management">
+      <h3>Setup Profile</h3>
+      <img src="assets/Setup_profile.jpg" alt="Setup Profile" height="350" style="margin-right: 10px;>
     </div>
     <div class="screenshot">
-      <h3>Dashboard</h3>
-      <img src="assets/screenshots/dashboard.jpg" alt="Dashboard">
+      <h3>Home Screen</h3>
+      <img src="assets/home_screen.jpg" alt="Home Screen" height="350" style="margin-right: 10px;>
     </div>
   </div>
 
