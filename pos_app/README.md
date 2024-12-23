@@ -21,7 +21,7 @@
   <p>To run this app locally, follow these steps:</p>
   <ol>
     <li>Clone the repository:</li>
-    <pre><code>git clone https://github.com/yourusername/pos_app.git</code></pre>
+    <pre><code>git clone https://github.com/fareedtariq/pos_app.git</code></pre>
     <li>Navigate to the project directory:</li>
     <pre><code>cd pos_app</code></pre>
     <li>Install the dependencies:</li>
@@ -31,30 +31,45 @@
   </ol>
 
   <h2>App Screenshots</h2>
-  <p>Below are some screenshots of the app:</p>
+ <p>Below are some screenshots of the app:</p>
 
-  <div class="screenshot-section">
-    <div class="screenshot">
-      <h3>Splash Screen</h3>
-      <img src="![splash_screen](https://github.com/user-attachments/assets/88c7b01e-e4c3-4fed-9aa7-201c54b0b556)" alt="Splash Screen">
-    </div>
-    <div class="screenshot">
-      <h3>Login Screen</h3>
-      <img src="assets/screenshots/login_screen.jpg" alt="Login Screen">
-    </div>
-    <div class="screenshot">
-      <h3>Order Management</h3>
-      <img src="assets/screenshots/order_management.jpg" alt="Order Management">
-    </div>
-    <div class="screenshot">
-      <h3>Inventory Management</h3>
-      <img src="assets/screenshots/inventory_management.jpg" alt="Inventory Management">
-    </div>
-    <div class="screenshot">
-      <h3>Dashboard</h3>
-      <img src="assets/screenshots/dashboard.jpg" alt="Dashboard">
-    </div>
+<div class="screenshot-section" style="display: flex; flex-wrap: wrap; gap: 20px;">
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Splash Screen</h3>
+    <img src="assets/splash_screen.jpg" alt="Splash Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
   </div>
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Login Screen</h3>
+    <img src="assets/login_screen.jpg" alt="Login Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Notification</h3>
+    <img src="assets/notification_screen.jpg" alt="Notification" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Setup Profile</h3>
+    <img src="assets/Setup_profile.jpg" alt="Setup Profile" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Home Screen</h3>
+    <img src="assets/home_screen.jpg" alt="Home Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+  <div class="screenshot-section" style="display: flex; flex-wrap: wrap; gap: 20px;">
+  <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Products Screen</h3>
+    <img src="assets/products_screen.jpg" alt="Products Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Account Screen</h3>
+    <img src="assets/accounts_screen.jpg" alt="Account Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+ <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+    <h3>Stock Report Screen</h3>
+    <img src="assets/stock_reposts.jpg" alt="Stock Report Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+</div>
+
+  
 
   <h2>Dependencies</h2>
   <p>This app uses the following dependencies:</p>
