@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "451427826000",
+    "project_id": "posapp-99e7d",
+    "storage_bucket": "posapp-99e7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451427826000:android:285a518d0576be894bd455",
+        "android_client_info": {
+          "package_name": "com.example.pos_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451427826000-99rqkpb1ard8rmff1i3c61q45gah5jah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaDYavREQGWqTuzH7Y5BH7OHENLezmBhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451427826000-99rqkpb1ard8rmff1i3c61q45gah5jah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
