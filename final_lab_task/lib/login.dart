@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';  // Import Firebase Auth
 import 'package:flutter/material.dart';
 import 'schedule_screen.dart';  // Import ScheduleScreen
 import 'sign_up.dart';  // Import CreateAccountPage
-
+import 'package:firebase_auth/firebase_auth.dart';  // Import Firebase Auth
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();

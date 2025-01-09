@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'schedule_manager.dart';
+import 'schedule_manager.dart'; // Import ScheduleManager
+import 'profile.dart'; // Import ProfileScreen
 
 class ScheduleScreen extends StatefulWidget {
   @override
@@ -135,6 +136,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  // Delete a schedule
+  Future<void> _deleteSchedule(int scheduleId, String firestoreId) async {
+    try {
+      // Delete schedule from both Firestore and local storage
+      await _scheduleManager.deleteSchedule(scheduleId, firestoreId); // Pass both scheduleId (int) and firestoreId (String)
+      _fetchSchedules(); // Refresh the schedule list after deletion
+    } catch (e) {
+      print("Error deleting schedule: $e");
+    }
+  }
+
+  // Navigate to Profile screen
+  void _navigateToProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileScreen()), // Profile Screen navigation
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,12 +167,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             title: Text(schedule['name']),
             subtitle: Text('Date: ${schedule['date']} Time: ${schedule['time']}'),
             onTap: () => _showScheduleDialog(schedule: schedule),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () async {
-                await _scheduleManager.deleteSchedule(schedule['id'], schedule['firestoreId']);
-                _fetchSchedules();
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => _showScheduleDialog(schedule: schedule),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () async {
+                    // Confirm before deleting
+                    bool confirmDelete = await _confirmDelete();
+                    if (confirmDelete) {
+                      // Convert scheduleId to int (SQLite ID) before passing to _deleteSchedule
+                      await _deleteSchedule(schedule['id'] as int, schedule['firestoreId']);
+                    }
+                  },
+                ),
+              ],
             ),
           );
         },
@@ -161,6 +194,45 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         onPressed: () => _showScheduleDialog(),
         child: Icon(Icons.add),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.schedule),
+            label: 'Schedules',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 1) {
+            _navigateToProfile();  // Navigate to Profile screen
+          }
+        },
+      ),
     );
+  }
+
+  // Confirm delete dialog
+  Future<bool> _confirmDelete() async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure you want to delete this schedule?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
   }
 }

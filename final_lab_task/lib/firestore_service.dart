@@ -1,26 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Add a schedule to Firestore
   Future<void> addSchedule(Map<String, dynamic> schedule) async {
-    await _db.collection('schedules').add(schedule);
+    try {
+      await _firestore.collection('schedules').add(schedule);
+    } catch (e) {
+      print("Error adding schedule to Firestore: $e");
+    }
   }
 
   // Update a schedule in Firestore
-  Future<void> updateSchedule(String id, Map<String, dynamic> schedule) async {
-    await _db.collection('schedules').doc(id).update(schedule);
+  Future<void> updateSchedule(String firestoreId, Map<String, dynamic> schedule) async {
+    try {
+      await _firestore.collection('schedules').doc(firestoreId).update(schedule);
+    } catch (e) {
+      print("Error updating schedule in Firestore: $e");
+    }
   }
 
   // Delete a schedule from Firestore
-  Future<void> deleteSchedule(String id) async {
-    await _db.collection('schedules').doc(id).delete();
+  Future<void> deleteSchedule(String firestoreId) async {
+    try {
+      await _firestore.collection('schedules').doc(firestoreId).delete();
+    } catch (e) {
+      print("Error deleting schedule from Firestore: $e");
+    }
   }
 
   // Get all schedules from Firestore
   Future<List<Map<String, dynamic>>> getSchedules() async {
-    QuerySnapshot querySnapshot = await _db.collection('schedules').get();
-    return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    try {
+      QuerySnapshot querySnapshot = await _firestore.collection('schedules').get();
+      return querySnapshot.docs.map((doc) {
+        return {
+          'id': doc.id,  // Firestore document ID
+          'name': doc['name'],
+          'date': doc['date'],
+          'time': doc['time'],
+        };
+      }).toList();
+    } catch (e) {
+      print("Error fetching schedules from Firestore: $e");
+      throw Exception("Error fetching schedules from Firestore");
+    }
   }
 }
