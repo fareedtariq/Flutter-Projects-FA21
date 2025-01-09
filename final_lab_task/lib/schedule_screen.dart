@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'schedule_manager.dart'; // Import ScheduleManager
 import 'profile.dart'; // Import ProfileScreen
+import 'firestore_service.dart'; // Import FirestoreService
 
 class ScheduleScreen extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final ScheduleManager _scheduleManager = ScheduleManager();
+  final FirestoreService _firestoreService = FirestoreService();
   List<Map<String, dynamic>> _schedules = [];
 
   @override
@@ -24,6 +26,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   // Fetch schedules from Firestore or local storage
   _fetchSchedules() async {
     List<Map<String, dynamic>> schedules = await _scheduleManager.getSchedules();
+    if (schedules.isEmpty) {
+      schedules = await _firestoreService.getSchedules();  // Fetch from Firestore if local DB is empty
+    }
     setState(() {
       _schedules = schedules;
     });
@@ -104,13 +109,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             TextButton(
               onPressed: () {
                 if (schedule != null) {
-                  _scheduleManager.updateSchedule(schedule['id'].toString(), {
+                  _firestoreService.updateSchedule(schedule['id'], {
                     'name': _nameController.text,
                     'date': _dateController.text,
                     'time': _timeController.text,
                   });
                 } else {
-                  _scheduleManager.addSchedule({
+                  _firestoreService.addSchedule({
                     'name': _nameController.text,
                     'date': _dateController.text,
                     'time': _timeController.text,
@@ -139,9 +144,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   // Delete a schedule
   Future<void> _deleteSchedule(int scheduleId, String firestoreId) async {
     try {
-      // Delete schedule from both Firestore and local storage
-      await _scheduleManager.deleteSchedule(scheduleId, firestoreId); // Pass both scheduleId (int) and firestoreId (String)
-      _fetchSchedules(); // Refresh the schedule list after deletion
+      await _scheduleManager.deleteSchedule(scheduleId);
+      await _firestoreService.deleteSchedule(firestoreId);
+      _fetchSchedules();  // Refresh the schedule list after deletion
     } catch (e) {
       print("Error deleting schedule: $e");
     }
@@ -177,10 +182,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () async {
-                    // Confirm before deleting
                     bool confirmDelete = await _confirmDelete();
                     if (confirmDelete) {
-                      // Convert scheduleId to int (SQLite ID) before passing to _deleteSchedule
                       await _deleteSchedule(schedule['id'] as int, schedule['firestoreId']);
                     }
                   },

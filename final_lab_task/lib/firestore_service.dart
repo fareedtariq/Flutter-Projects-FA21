@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -6,7 +7,8 @@ class FirestoreService {
   // Add a schedule to Firestore
   Future<void> addSchedule(Map<String, dynamic> schedule) async {
     try {
-      await _firestore.collection('schedules').add(schedule);
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await _firestore.collection('users').doc(userId).collection('schedules').add(schedule);
     } catch (e) {
       print("Error adding schedule to Firestore: $e");
     }
@@ -15,7 +17,8 @@ class FirestoreService {
   // Update a schedule in Firestore
   Future<void> updateSchedule(String firestoreId, Map<String, dynamic> schedule) async {
     try {
-      await _firestore.collection('schedules').doc(firestoreId).update(schedule);
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await _firestore.collection('users').doc(userId).collection('schedules').doc(firestoreId).update(schedule);
     } catch (e) {
       print("Error updating schedule in Firestore: $e");
     }
@@ -24,7 +27,8 @@ class FirestoreService {
   // Delete a schedule from Firestore
   Future<void> deleteSchedule(String firestoreId) async {
     try {
-      await _firestore.collection('schedules').doc(firestoreId).delete();
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await _firestore.collection('users').doc(userId).collection('schedules').doc(firestoreId).delete();
     } catch (e) {
       print("Error deleting schedule from Firestore: $e");
     }
@@ -33,7 +37,8 @@ class FirestoreService {
   // Get all schedules from Firestore
   Future<List<Map<String, dynamic>>> getSchedules() async {
     try {
-      QuerySnapshot querySnapshot = await _firestore.collection('schedules').get();
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot querySnapshot = await _firestore.collection('users').doc(userId).collection('schedules').get();
       return querySnapshot.docs.map((doc) {
         return {
           'id': doc.id,  // Firestore document ID
