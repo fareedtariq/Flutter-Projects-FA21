@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'schedule_manager.dart'; // Import ScheduleManager
 import 'profile.dart'; // Import ProfileScreen
 import 'firestore_service.dart'; // Import FirestoreService
+import 'assignment_screen.dart'; // Import AssignmentScreen (new import)
 
 class ScheduleScreen extends StatefulWidget {
   @override
@@ -160,6 +161,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  // Navigate to Assignment screen
+  void _navigateToAssignments() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AssignmentScreen()), // Assignment Screen navigation
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,12 +213,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             label: 'Schedules',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Assignments',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Profile',
           ),
         ],
         onTap: (index) {
           if (index == 1) {
+            _navigateToAssignments(); // Navigate to Assignment screen
+          } else if (index == 2) {
             _navigateToProfile();  // Navigate to Profile screen
           }
         },

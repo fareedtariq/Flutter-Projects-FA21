@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
-import 'sign_up.dart';
-import 'login.dart';
-import 'profile.dart';
-import 'schedule_screen.dart';  // Import ScheduleScreen
-import 'splash_screen.dart';  // Import SplashScreen
+import 'sign_up.dart'; // Import SignUp page
+import 'login.dart'; // Import Login page
+import 'profile.dart'; // Import Profile page
+import 'schedule_screen.dart'; // Import Schedule Screen
+import 'splash_screen.dart'; // Import Splash Screen
+import 'firebase_messaging_service.dart'; // Import Firebase Messaging Service
+import 'assignment_screen.dart'; // Import Assignment Screen (Assuming you added it)
+import 'notification_service.dart'; // Import Notification Service
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  // Show splash screen and initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    await FirebaseMessagingService().initialize();
+    await NotificationService().initialize();
+  } catch (e) {
+    print("Error during initialization: $e");
+  }
 
   runApp(MyApp());
 }
@@ -23,12 +32,13 @@ class MyApp extends StatelessWidget {
       title: 'Campus Life Assistant',
       initialRoute: '/splash',  // Set the initial route to SplashScreen
       routes: {
-        '/splash': (context) => SplashScreen(),  // Added route for SplashScreen
-        '/signUp': (context) => CreateAccountPage(),
-        '/login': (context) => LoginPage(),
-        '/profile': (context) => ProfileScreen(),
-        '/schedule': (context) => ScheduleScreen(),  // Added route for ScheduleScreen
-        // You can add more routes here, for example, for HomeScreen or other parts of your app
+        '/splash': (context) => SplashScreen(),  // Route for SplashScreen
+        '/signUp': (context) => CreateAccountPage(),  // Route for SignUp Screen
+        '/login': (context) => LoginPage(),  // Route for Login Screen
+        '/profile': (context) => ProfileScreen(),  // Route for Profile Screen
+        '/schedule': (context) => ScheduleScreen(),  // Route for Schedule Screen
+        '/assignments': (context) => AssignmentScreen(),  // Added route for Assignment Screen
+        // You can add more routes here for other parts of your app
       },
     );
   }

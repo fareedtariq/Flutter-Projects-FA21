@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'login.dart';  // Import NotificationScreen
 
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Simulate initialization tasks (like Firebase init)
+    Future.delayed(Duration(seconds: 3), () {
+      // Automatically navigate to the next screen (Login) after a delay
+      Navigator.pushReplacementNamed(context, '/login');  // Navigate to the login screen after delay
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -39,26 +44,9 @@ class SplashScreen extends StatelessWidget {
                 color: Colors.grey[600],
               ),
             ),
-            SizedBox(height: 40), // Space between text and button
+            SizedBox(height: 40), // Space between text and next element
 
-            // Continue button
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to Notification Screen
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,  // Button color
-                minimumSize: Size(double.infinity, 50),  // Full width button
-              ),
-              child: Text(
-                'Continue',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            // No "Continue" button, automatic transition after the delay
           ],
         ),
       ),
