@@ -6,8 +6,11 @@ import 'profile.dart'; // Import Profile page
 import 'schedule_screen.dart'; // Import Schedule Screen
 import 'splash_screen.dart'; // Import Splash Screen
 import 'firebase_messaging_service.dart'; // Import Firebase Messaging Service
-import 'assignment_screen.dart'; // Import Assignment Screen (Assuming you added it)
-import 'notification_service.dart'; // Import Notification Service
+import 'assignment_screen.dart'; // Import Assignment Screen
+import 'notification_service.dart';
+import 'firebase_options.dart';
+import 'StudyGroupFinder.dart'; // Import Study Group Finder screen
+import 'FeedbackSystem.dart'; // Import Feedback System screen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +40,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),  // Route for Login Screen
         '/profile': (context) => ProfileScreen(),  // Route for Profile Screen
         '/schedule': (context) => ScheduleScreen(),  // Route for Schedule Screen
-        '/assignments': (context) => AssignmentScreen(),  // Added route for Assignment Screen
+        '/assignments': (context) => AssignmentScreen(),  // Route for Assignment Screen
+        '/studyGroup': (context) => StudyGroupFinder(), // Route for Study Group Finder
+        '/feedback': (context) => FeedbackSystem(),  // Route for Feedback System
         // You can add more routes here for other parts of your app
       },
     );

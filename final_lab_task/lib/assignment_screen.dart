@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart'; // For formatting date/time
 import 'firestore_service.dart';
 import 'schedule_database.dart';
 import 'notification_service.dart';
@@ -17,6 +19,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
   List<Assignment> _assignments = [];
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _deadlineController = TextEditingController();
+  String? _filePath; // To store file path for attached document
 
   @override
   void initState() {
@@ -34,16 +37,18 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       await _localStorageService.saveAssignmentToLocal(assignment);
     }
 
-    // Update the state with the fetched assignments
-    _assignments = firestoreAssignments;
-    setState(() {});
+    // Fetch assignments from local storage and update the state
+    List<Assignment> localAssignments = await _localStorageService.getAssignmentsFromLocal();
+    setState(() {
+      _assignments = localAssignments;
+    });
   }
 
   // Show dialog to add or update an assignment
   Future<void> _showAssignmentDialog({Assignment? assignment}) async {
     if (assignment != null) {
       _titleController.text = assignment.title;
-      _deadlineController.text = assignment.deadline.toIso8601String();
+      _deadlineController.text = DateFormat('yyyy-MM-dd HH:mm').format(assignment.deadline);
     }
 
     showDialog(
@@ -51,29 +56,60 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(assignment != null ? 'Edit Assignment' : 'Add Assignment'),
-          content: Column(
-            children: [
-              TextField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Assignment Title'),
+          content: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _titleController,
+                    decoration: InputDecoration(labelText: 'Assignment Title'),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: _deadlineController,
+                    decoration: InputDecoration(
+                      labelText: 'Deadline (yyyy-mm-dd hh:mm)',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () => _selectDeadline(),
+                      ),
+                    ),
+                    readOnly: true,
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // File picker for document attachment
+                      FilePickerResult? result = await FilePicker.platform.pickFiles();
+                      if (result != null) {
+                        setState(() {
+                          _filePath = result.files.single.path;
+                        });
+                      }
+                    },
+                    child: Text('Attach Document'),
+                  ),
+                  if (_filePath != null) ...[
+                    SizedBox(height: 10),
+                    Text('Attached File: $_filePath'),
+                  ],
+                ],
               ),
-              TextField(
-                controller: _deadlineController,
-                decoration: InputDecoration(labelText: 'Deadline (yyyy-mm-dd hh:mm)'),
-                keyboardType: TextInputType.datetime,
-              ),
-            ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () async {
                 final title = _titleController.text;
-                final deadline = DateTime.parse(_deadlineController.text);
+                final deadline = DateFormat('yyyy-MM-dd HH:mm').parse(_deadlineController.text);
 
                 Assignment newAssignment = Assignment(
-                  id: assignment?.id ?? DateTime.now().toString(),  // Generate new id if not editing
+                  id: assignment?.id ?? DateTime.now().toString(),
                   title: title,
                   deadline: deadline,
+                  filePath: _filePath, // Add file path
                 );
 
                 if (assignment != null) {
@@ -88,8 +124,12 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
                 _notificationService.showDeadlineReminder(newAssignment);
 
+                // Clear fields and reset file path
                 _titleController.clear();
                 _deadlineController.clear();
+                _filePath = null;
+
+                // Close dialog and refresh assignments
                 Navigator.pop(context);
                 _syncAssignments(); // Refresh the list of assignments
               },
@@ -97,7 +137,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);  // Close the dialog
+                Navigator.pop(context); // Close the dialog
               },
               child: Text('Cancel'),
             ),
@@ -105,6 +145,34 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         );
       },
     );
+  }
+
+  // Show date and time picker for deadline
+  Future<void> _selectDeadline() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(pickedDate),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _deadlineController.text =
+              DateFormat('yyyy-MM-dd HH:mm').format(DateTime(
+                pickedDate.year,
+                pickedDate.month,
+                pickedDate.day,
+                pickedTime.hour,
+                pickedTime.minute,
+              ));
+        });
+      }
+    }
   }
 
   // Delete an assignment
@@ -147,22 +215,29 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         itemCount: _assignments.length,
         itemBuilder: (context, index) {
           Assignment assignment = _assignments[index];
-          return ListTile(
-            title: Text(assignment.title),
-            subtitle: Text('Due: ${assignment.deadline}'),
-            onTap: () => _notificationService.showDeadlineReminder(assignment),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => _showAssignmentDialog(assignment: assignment),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _deleteAssignment(assignment),
-                ),
-              ],
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 5,
+            child: ListTile(
+              contentPadding: EdgeInsets.all(10),
+              title: Text(assignment.title, style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text('Due: ${DateFormat('yyyy-MM-dd HH:mm').format(assignment.deadline)}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => _showAssignmentDialog(assignment: assignment),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => _deleteAssignment(assignment),
+                  ),
+                ],
+              ),
             ),
           );
         },

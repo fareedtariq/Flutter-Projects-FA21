@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'schedule_manager.dart'; // Import ScheduleManager
 import 'profile.dart'; // Import ProfileScreen
 import 'firestore_service.dart'; // Import FirestoreService
-import 'assignment_screen.dart'; // Import AssignmentScreen (new import)
+import 'assignment_screen.dart'; // Import AssignmentScreen
+import 'StudyGroupFinder.dart'; // Import Study Group Finder
+import 'FeedbackSystem.dart'; // Import Feedback System
 
 class ScheduleScreen extends StatefulWidget {
   @override
@@ -17,6 +19,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final ScheduleManager _scheduleManager = ScheduleManager();
   final FirestoreService _firestoreService = FirestoreService();
   List<Map<String, dynamic>> _schedules = [];
+
+  int _selectedIndex = 0; // Track the selected index for BottomNavigationBar
 
   @override
   void initState() {
@@ -169,10 +173,60 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  // Navigate to Study Group screen
+  void _navigateToStudyGroup() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => StudyGroupFinder()), // Study Group Finder navigation
+    );
+  }
+
+  // Navigate to Feedback screen
+  void _navigateToFeedback() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FeedbackSystem()), // Feedback System navigation
+    );
+  }
+
+  // Handle BottomNavigationBar item taps
+  void _onNavBarItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (_selectedIndex) {
+      case 0:
+        break; // Stay on the current page (ScheduleScreen)
+      case 1:
+        _navigateToAssignments(); // Navigate to Assignment Screen
+        break;
+      case 2:
+        _navigateToProfile(); // Navigate to Profile Screen
+        break;
+      case 3:
+        _navigateToStudyGroup(); // Navigate to Study Group Finder Screen
+        break;
+      case 4:
+        _navigateToFeedback(); // Navigate to Feedback System Screen
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Class Schedule')),
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent, // AppBar Color
+        elevation: 5, // Adding shadow
+        title: Text(
+          'Class Schedule',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+      ),
       body: ListView.builder(
         itemCount: _schedules.length,
         itemBuilder: (context, index) {
@@ -205,8 +259,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showScheduleDialog(),
         child: Icon(Icons.add),
+        backgroundColor: Colors.blueAccent, // Floating Action Button Color
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onNavBarItemTapped,
+        selectedItemColor: Colors.blueAccent, // Active tab color
+        unselectedItemColor: Colors.grey, // Inactive tab color
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.schedule),
@@ -220,14 +281,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             icon: Icon(Icons.account_circle),
             label: 'Profile',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Study Group',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.feedback),
+            label: 'Feedback',
+          ),
         ],
-        onTap: (index) {
-          if (index == 1) {
-            _navigateToAssignments(); // Navigate to Assignment screen
-          } else if (index == 2) {
-            _navigateToProfile();  // Navigate to Profile screen
-          }
-        },
       ),
     );
   }

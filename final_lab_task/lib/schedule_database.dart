@@ -15,15 +15,24 @@ class ScheduleDatabase {
   // Initialize the database
   Future<Database> initDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
-    return openDatabase(path, version: 1, onCreate: (db, version) {
+    return openDatabase(path, version: 2, onCreate: (db, version) {
+      // Drop tables if they exist and create new tables
+      db.execute('DROP TABLE IF EXISTS schedules');
+      db.execute('DROP TABLE IF EXISTS assignments');
+
       // Create schedules table
       db.execute(
         'CREATE TABLE schedules(id INTEGER PRIMARY KEY, name TEXT, date TEXT, time TEXT)',
       );
-      // Create assignments table
+      // Create assignments table with filePath column
       db.execute(
-        'CREATE TABLE assignments(id TEXT PRIMARY KEY, title TEXT, deadline TEXT)',
+        'CREATE TABLE assignments(id TEXT PRIMARY KEY, title TEXT, deadline TEXT, filePath TEXT)',
       );
+    }, onUpgrade: (db, oldVersion, newVersion) {
+      if (oldVersion < 2) {
+        // Handle schema upgrade by adding new columns or updating tables
+        db.execute('ALTER TABLE assignments ADD COLUMN filePath TEXT');
+      }
     });
   }
 
@@ -75,6 +84,7 @@ class ScheduleDatabase {
         'id': assignment.id,
         'title': assignment.title,
         'deadline': assignment.deadline.toIso8601String(),
+        'filePath': assignment.filePath, // Include filePath
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -98,6 +108,7 @@ class ScheduleDatabase {
       {
         'title': assignment.title,
         'deadline': assignment.deadline.toIso8601String(),
+        'filePath': assignment.filePath, // Update filePath
       },
       where: 'id = ?',
       whereArgs: [assignment.id],
