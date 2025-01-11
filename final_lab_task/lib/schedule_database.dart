@@ -1,21 +1,21 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'assignment.dart';  // Assuming you have an `Assignment` model defined in assignment.dart
+import 'assignment.dart'; // Assuming you have an Assignment model defined in assignment.dart
 
 class ScheduleDatabase {
   static Database? _database;
 
   // Get the database instance
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await initDatabase();
+    if (_database != null) return _database!; // Return the already initialized database
+    _database = await initDatabase(); // Initialize the database if not done yet
     return _database!;
   }
 
   // Initialize the database
-  initDatabase() async {
+  Future<Database> initDatabase() async {
     String path = join(await getDatabasesPath(), 'schedule.db');
-    return openDatabase(path, onCreate: (db, version) {
+    return openDatabase(path, version: 1, onCreate: (db, version) {
       // Create schedules table
       db.execute(
         'CREATE TABLE schedules(id INTEGER PRIMARY KEY, name TEXT, date TEXT, time TEXT)',
@@ -24,7 +24,7 @@ class ScheduleDatabase {
       db.execute(
         'CREATE TABLE assignments(id TEXT PRIMARY KEY, title TEXT, deadline TEXT)',
       );
-    }, version: 1);
+    });
   }
 
   // *** Schedule Operations ***
@@ -44,7 +44,12 @@ class ScheduleDatabase {
   // Update a schedule in the database
   Future<void> updateSchedule(Map<String, dynamic> schedule) async {
     final db = await database;
-    await db.update('schedules', schedule, where: 'id = ?', whereArgs: [schedule['id']]);
+    await db.update(
+      'schedules',
+      schedule,
+      where: 'id = ?',
+      whereArgs: [schedule['id']],
+    );
   }
 
   // Delete a schedule from the database
