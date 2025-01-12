@@ -82,56 +82,93 @@ class _StudyGroupFinderState extends State<StudyGroupFinder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Study Group Finder")),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
+      appBar: AppBar(
+        title: Text("Study Group Finder"),
+        backgroundColor: Colors.blue, // Blue AppBar
+        elevation: 5,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Group Name Input
+            TextField(
               controller: _groupNameController,
               decoration: InputDecoration(
                 labelText: 'Group Name',
                 hintText: 'Enter the name of the study group',
+                labelStyle: TextStyle(color: Colors.blue),
+                filled: true,
+                fillColor: Colors.blue[50], // Light blue background for text field
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
               ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: createStudyGroup,
-            child: Text('Create Study Group'),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('study_groups').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
+            SizedBox(height: 20),
 
-                var groups = snapshot.data!.docs;
-                return ListView.builder(
-                  itemCount: groups.length,
-                  itemBuilder: (context, index) {
-                    var group = groups[index];
-                    bool isMember = group['members'].contains(_currentUser?.uid);
-                    return ListTile(
-                      title: Text(group['group_name']),
-                      subtitle: Text('Members: ${group['members'].length}'),
-                      trailing: isMember
-                          ? IconButton(
-                        icon: Icon(Icons.exit_to_app),
-                        onPressed: () => leaveStudyGroup(group.id),
-                      )
-                          : IconButton(
-                        icon: Icon(Icons.group_add),
-                        onPressed: () => joinStudyGroup(group.id),
-                      ),
-                    );
-                  },
-                );
-              },
+            // Create Group Button
+            ElevatedButton(
+              onPressed: createStudyGroup,
+              child: Text('Create Study Group'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Blue button
+                padding: EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 20),
+
+            // List of Study Groups
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('study_groups').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  var groups = snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: groups.length,
+                    itemBuilder: (context, index) {
+                      var group = groups[index];
+                      bool isMember = group['members'].contains(_currentUser?.uid);
+                      return Card(
+                        elevation: 5,
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          title: Text(
+                            group['group_name'],
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          subtitle: Text('Members: ${group['members'].length}'),
+                          trailing: isMember
+                              ? IconButton(
+                            icon: Icon(Icons.exit_to_app, color: Colors.blue),
+                            onPressed: () => leaveStudyGroup(group.id),
+                          )
+                              : IconButton(
+                            icon: Icon(Icons.group_add, color: Colors.blue),
+                            onPressed: () => joinStudyGroup(group.id),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
   final TextEditingController _ratingController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
 
+  // Function to submit feedback
   Future<void> submitFeedback(String category) async {
     String rating = _ratingController.text.trim();
     String comment = _commentController.text.trim();
@@ -26,6 +27,10 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Feedback submitted successfully!"),
       ));
+
+      // Reset the text fields after submission
+      _ratingController.clear();
+      _commentController.clear();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Please fill out all fields!"),
@@ -38,11 +43,11 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Feedback System"),
-        backgroundColor: Color(0xFF4CAF50), // Green background for AppBar
+        backgroundColor: Colors.blue, // Blue color for AppBar
         elevation: 0,
       ),
       body: Container(
-        color: Color(0xFFF1F8E9), // Light green background for the screen
+        color: Colors.blue[50], // Light blue background for the screen
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
@@ -96,7 +101,7 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
                 onPressed: () => submitFeedback('Course'),
                 child: Text('Submit Feedback for Course'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF388E3C), // Green color for buttons
+                  backgroundColor: Colors.blue, // Blue color for buttons
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
@@ -108,7 +113,7 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
                 onPressed: () => submitFeedback('Professor'),
                 child: Text('Submit Feedback for Professor'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF388E3C), // Green color for buttons
+                  backgroundColor: Colors.blue, // Blue color for buttons
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
@@ -120,7 +125,7 @@ class _FeedbackSystemState extends State<FeedbackSystem> {
                 onPressed: () => submitFeedback('Campus Service'),
                 child: Text('Submit Feedback for Campus Service'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF388E3C), // Green color for buttons
+                  backgroundColor: Colors.blue, // Blue color for buttons
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
