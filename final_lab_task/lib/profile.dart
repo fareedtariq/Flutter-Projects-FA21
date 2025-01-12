@@ -105,7 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? NetworkImage(_profileImageUrl!) // Show image from URL
                     : AssetImage('assets/default_avatar.png') as ImageProvider,
                 child: _profileImageUrl == null
-                    ? Icon(Icons.camera_alt, color: Colors.white) // Show camera icon if no image
+                    ? Icon(Icons.camera_alt,
+                    color: Colors.white) // Show camera icon if no image
                     : null,
               ),
             ),
