@@ -56,28 +56,40 @@
   <p>Below are some screenshots of the app:</p>
   <div class="screenshot-section" style="display: flex; flex-wrap: wrap; gap: 20px;">
     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>Splash Screen</h3>
+      <img src="screenshots/splash.jpg" alt="Splash Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    </div>
+    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
       <h3>Login Screen</h3>
-      <img src="assets/login_screen.jpg" alt="Login Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+      <img src="screenshots/login.jpg" alt="Login Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    </div>
+    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>Sign Up</h3>
+      <img src="screenshots/signup.jpg" alt="Sign Up" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    </div>
+    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>setup profile</h3>
+      <img src="screenshots/setupprofile.jpg" alt="setup profile" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
       <h3>Class Schedule</h3>
-      <img src="assets/class_schedule.jpg" alt="Class Schedule" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+      <img src="screenshots/class_schedule.jpg" alt="Class Schedule" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
-      <h3>Assignment Tracker</h3>
-      <img src="assets/assignment_tracker.jpg" alt="Assignment Tracker" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+      <h3>Assingment</h3>
+      <img src="screenshots/assignment.jpg" alt="Assingment" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
-    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
-      <h3>Event Notifications</h3>
-      <img src="assets/event_notifications.jpg" alt="Event Notifications" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>Profile</h3>
+      <img src="screenshots/profile.jpg" alt="Profile" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
       <h3>Study Group Finder</h3>
-      <img src="assets/study_group_finder.jpg" alt="Study Group Finder" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+      <img src="screenshots/study_group.jpg" alt="Study Group Finder" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
-    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
-      <h3>Feedback System</h3>
-      <img src="assets/feedback_system.jpg" alt="Feedback System" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>Feedback</h3>
+      <img src="screenshots/feedback.jpg" alt="Feedback" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
   </div>
 
