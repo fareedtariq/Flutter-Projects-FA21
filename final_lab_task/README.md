@@ -62,6 +62,10 @@
   <p>Below are some screenshots of the app:</p>
   <div class="screenshot-section" style="display: flex; flex-wrap: wrap; gap: 20px;">
     <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
+      <h3>Notification Screen</h3>
+      <img src="screenshots/notification.jpg" alt="notification Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    </div>
+    <div class="screenshot" style="flex: 1 1 calc(33.33% - 20px);">
       <h3>Splash Screen</h3>
       <img src="screenshots/splash.jpg" alt="Splash Screen" style="width: 20%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
     </div>
