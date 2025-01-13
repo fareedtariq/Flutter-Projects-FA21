@@ -27,7 +27,7 @@ class SplashScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Welcome text
+            // Welcome texts
             Text(
               'Welcome!',
               style: TextStyle(
@@ -38,7 +38,7 @@ class SplashScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Welcome to Flutter POS app',
+              'Welcome to Flutter Campus Life Assistant app',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
