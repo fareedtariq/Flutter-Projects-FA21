@@ -2,7 +2,13 @@
 
   <h1>Campus Life Assistant App</h1>
   <p>This is a comprehensive Flutter-based application designed to assist students in managing their campus life efficiently. The app provides features like class schedule management, assignment tracking, event notifications, and more. It leverages Firebase and SQLite for data management and storage.</p>
-
+ <h2>APK Download</h2>
+  <p>You can download the latest APK of the app from the link below:</p>
+  <a href="App APK/app-release.apk" download>
+    <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+      Download APK
+    </button>
+  </a>
   <h2>Features</h2>
   <ul>
     <li><strong>Firebase Setup</strong>: Integration with Firebase for authentication and notifications.</li>
