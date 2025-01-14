@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'schedule_manager.dart'; // Import ScheduleManager
 import 'profile.dart'; // Import ProfileScreen
 import 'firestore_service.dart'; // Import FirestoreService
@@ -217,7 +216,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueAccent, // AppBar Color
-        elevation: 5, // Adding shadow
+        elevation: 5,
+        automaticallyImplyLeading: false,// Adding shadow
         title: Text(
           'Class Schedule',
           style: TextStyle(

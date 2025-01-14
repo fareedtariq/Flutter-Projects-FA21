@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';  // Import Firebase Auth
-import 'profile_setup.dart';  // Import ProfileSetupPage (ensure this is the correct path for your Profile Setup page)
+import 'package:firebase_auth/firebase_auth.dart';
+import 'profile_setup.dart';
 
 class CreateAccountPage extends StatefulWidget {
   @override
@@ -13,36 +13,61 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   bool _isAgree = false; // To track the state of terms and conditions checkbox
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Method to handle account creation
+  // Method to handle account creation and email verification
   Future<void> _createAccount() async {
     try {
-      // Check if the checkbox is checked
       if (!_isAgree) {
-        // Show an error if terms and conditions are not agreed to
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('You must agree to the Terms of service & privacy policy.'),
         ));
         return;
       }
 
-      // Create a new user with email and password
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Navigate to ProfileSetupPage if successful
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ProfileSetupPage()),
-      );
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Send email verification
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Verification email sent. Please check your inbox.'),
+          ));
+        }
+
+        // Check email verification status
+        _checkEmailVerified(user);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: Unable to retrieve user information.'),
+        ));
+      }
     } catch (e) {
-      // Handle error (e.g., email already in use, weak password)
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${e.toString()}'),
       ));
     }
   }
+
+  Future<void> _checkEmailVerified(User user) async {
+    await user.reload(); // Reload user data
+    if (user.emailVerified) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ProfileSetupPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please verify your email before continuing.'),
+      ));
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,20 +77,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         title: Text('Let\'s get started!'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Heading text
             Text(
               'Please enter your valid data in order to create an account.',
               style: TextStyle(fontSize: 18, color: Colors.black87),
             ),
             SizedBox(height: 30),
-
-            // Email text field
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -76,8 +99,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 20),
-
-            // Password text field
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -88,8 +109,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               ),
             ),
             SizedBox(height: 20),
-
-            // Terms and conditions checkbox
             Row(
               children: [
                 Checkbox(
@@ -107,13 +126,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
               ],
             ),
-            Spacer(),  // Push the button to the bottom
-
-            // Continue button
+            Spacer(),
             ElevatedButton(
-              onPressed: _createAccount,  // Call the create account function
+              onPressed: _createAccount,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.blueAccent,
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
@@ -121,13 +138,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-
-            // Login link for users who already have an account
             Align(
               alignment: Alignment.center,
               child: TextButton(
                 onPressed: () {
-                  // Navigate to LoginPage
                   Navigator.pop(context);
                 },
                 child: Text(

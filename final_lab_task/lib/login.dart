@@ -73,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
         title: Text('Welcome back!'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false, // This removes the back arrow
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _login,  // Call the login function
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.blueAccent,
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
